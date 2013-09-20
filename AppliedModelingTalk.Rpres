@@ -28,12 +28,84 @@ Applied modeling and inferential statistics share many of the same concepts:
 - Fear of outliers
 - Robustness and sensitivity
 
-```{r, echo=FALSE, fig.align='center'}
+```{r, echo=FALSE, fig.align='center', fig.height=3.5, fig.width=8}
 library(eeptools)
 qplot(speed, dist, data=cars) + theme_dpi() + geom_smooth(method='lm', se=FALSE) +
   geom_smooth(method="loess", color=I("purple"), se=FALSE)+
   annotate("segment", x=24, xend=24, y=120, yend=77, color="red", lty = 3, size=1.1)
 
+```
+
+
+Supervised vs. Unsupervised Learning
+===========================================================
+
+A key distinction in statistical learning is that between **supervised** and 
+**unsupervised** techniques. 
+
+- **supervised** - relationship between inputs and outputs is being explored
+- **unsupervised** - the relationship among inputs is being explored, no output
+
+We will focus on **supervised** learning for the most part in this talk. 
+
+```{r clusters, echo=FALSE, results='hide', fig.align='center', fig.height=3, fig.width=4}
+x <- rbind(matrix(rnorm(100, sd = 0.3), ncol = 2),
+           matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2))
+colnames(x) <- c("x", "y")
+cl <- kmeans(x, 2)
+plot(x, col = cl$cluster)
+points(cl$centers, col = 1:2, pch = 8, cex = 2)
+# 
+# # sum of squares
+# ss <- function(x) sum(scale(x, scale = FALSE)^2)
+# 
+# ## cluster centers "fitted" to each obs.:
+# fitted.x <- fitted(cl);  head(fitted.x)
+# resid.x <- x - fitted(cl)
+# 
+# **Unsupervised** techniques like cluster, principal components, factor, and 
+# latent variable analysis can be very useful!
+```
+
+
+Statistical Modeling
+=======================================================
+
+It is useful to remember that in statistical modeling, in the **supervised** case, we are looking at the following relationship:
+
+$$ \hat{Y} = \hat{f}(X) $$
+
+In this case $\hat{f}$ represents our estimate of the function that links $X$ and 
+$Y$. In traditional linear modeling, $\hat{f}$ takes the form:
+
+$$ \hat{Y} = \alpha + \beta(X) + \epsilon $$
+
+However, there exist limitless alternative $\hat{f}$ which we can explore. Applied modeling techniques help us expand the $\hat{f}$ space we search within.
+
+How do we choose f?
+===================================================
+
+Choosing $f$ is about tradeoffs, the most obvious is between flexibility and 
+interpretability.
+
+```{r, echo=FALSE, fig.align='center', fig.width=11.5}
+library(eeptools)
+x    <- c(1, 2, 3, 4, 5, 6, 7, 8)
+y    <- c(14, 12, 10, 8, 6, 4, 2, 0)
+
+jit <- function(x) x + runif(1, min=-.5, max=.5)
+x <- sapply(x, jit)
+y <- sapply(y, jit)
+
+labs <- c("Lasso", "Subset Selection", "Least Squares", 
+          "Generalized Additive Models", "KNN", "Trees", "Bagging, Boosting", 
+          "Support Vector Machines")
+
+qplot(x, y, geom='text', label=labs) + theme_dpi() + 
+  scale_x_continuous("Flexibility", limits=c(min(x) - 0.5, max(x) + 0.5)) +
+  scale_y_continuous("Interpretability", limits=c(min(y) - 0.5, max(y) + 0.5)) +
+  labs(title="Functional Forms and Tradeoffs") + 
+  theme(axis.text=element_blank(), axis.ticks=element_blank())
 ```
 
 

@@ -32,6 +32,45 @@ Applied modeling and inferential statistics share many of the same concepts:
 
 
 
+Supervised vs. Unsupervised Learning
+===========================================================
+
+A key distinction in statistical learning is that between **supervised** and 
+**unsupervised** techniques. 
+
+- **supervised** - relationship between inputs and outputs is being explored
+- **unsupervised** - the relationship among inputs is being explored, no output
+
+We will focus on **supervised** learning for the most part in this talk. 
+
+<img src="AppliedModelingTalk-figure/clusters.png" title="plot of chunk clusters" alt="plot of chunk clusters" style="display: block; margin: auto;" />
+
+
+
+Statistical Modeling
+=======================================================
+
+It is useful to remember that in statistical modeling, in the **supervised** case, we are looking at the following relationship:
+
+$$ \hat{Y} = \hat{f}(X) $$
+
+In this case $\hat{f}$ represents our estimate of the function that links $X$ and 
+$Y$. In traditional linear modeling, $\hat{f}$ takes the form:
+
+$$ \hat{Y} = \alpha + \beta(X) + \epsilon $$
+
+However, there exist limitless alternative $\hat{f}$ which we can explore. Applied modeling techniques help us expand the $\hat{f}$ space we search within.
+
+How do we choose f?
+===================================================
+
+Choosing $f$ is about tradeoffs, the most obvious is between flexibility and 
+interpretability.
+
+<img src="AppliedModelingTalk-figure/unnamed-chunk-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
+
+
+
 Why the Difference?
 ========================================================
 
