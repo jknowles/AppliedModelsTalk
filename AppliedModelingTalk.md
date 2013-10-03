@@ -117,74 +117,55 @@ A Trivial Example
 
 Consider the following:
 
-
-```r
-library(MASS)
-library(Matrix)
-set.seed(1814)
-N <- 1000
-J <- 4 ### Number of predictors (including intercept)
-G <- 5 ### Number of Multilevel Groups
-X <- matrix(rnorm(N,0,1),N,J); X[,1] <- 1
-Sigma <- matrix(runif(J*J,-1,1),J,J)
-Sigma <- nearPD(Sigma)$mat
-diag(Sigma) <- runif(J,1,5)
-gamma <- runif(J,-.25,.25)
-beta <- matrix(NA,G,J)
-for (g in 1:G) {beta[g,] <- mvrnorm(1, gamma, Sigma)}
-m <- sample(1:G, N, replace=TRUE) ### Multilevel group indicator
-y <- rowSums(beta[m,] * X) + rnorm(N,0,1.4)
-
-plotdf <- cbind(X, m, y)
-plotdf <- as.data.frame(plotdf)
-
-mod1 <- lm(y ~ V2 + V3 + V4 + factor(m), data=plotdf[plotdf$m>3,])
-mod2 <- lm(y ~ V2 + V3 + factor(m), data=plotdf[plotdf$m<=3,])
-
-mod1.plot <- fortify(mod1)
-mod2.plot <- fortify(mod2)
-
-plotdf$sample <- NA
-plotdf$sample[plotdf$m>3] <- "A"
-plotdf$sample[plotdf$m<=3] <- "B"
-
-
-qplot(V2, y, data=plotdf[plotdf$m>3,]) + 
-  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.1)) +
-  theme_dpi()
-```
-
-![plot of chunk unnamed-chunk-3](AppliedModelingTalk-figure/unnamed-chunk-3.png) 
+<img src="AppliedModelingTalk-figure/unnamed-chunk-3.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" style="display: block; margin: auto;" />
 
 
 Consider the Test Data
 =========================
 
-
-```r
-qplot(V2, y, data=plotdf[plotdf$m<=3,]) + 
-  geom_smooth(data=mod2.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.1)) +
-  theme_dpi()
-```
-
-![plot of chunk unnamed-chunk-4](AppliedModelingTalk-figure/unnamed-chunk-4.png) 
+<img src="AppliedModelingTalk-figure/unnamed-chunk-4.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
 
 
 Consider the Pooled Data
 ==========================
 
+<img src="AppliedModelingTalk-figure/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
 
-```r
-qplot(V2, y, data=plotdf, color=sample) + geom_smooth(method=lm, aes(group=1))+
-  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted, color=NULL), 
-              se=FALSE, size=I(1.1)) +  
-     geom_smooth(data=mod2.plot, aes(x=V2, y=.fitted, color=NULL), 
-              se=FALSE, size=I(1.1)) + theme_dpi()
-```
 
-![plot of chunk unnamed-chunk-5](AppliedModelingTalk-figure/unnamed-chunk-5.png) 
+What do we learn?
+=============================
 
-```r
+- The data was generated the same
 
-```
 
+When Could this Matter: Stocks?
+=================================
+
+<img src="AppliedModelingTalk-figure/unnamed-chunk-6.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
+
+
+
+Forecasting Apple Stock Could be Useful
+===========================================
+
+<img src="AppliedModelingTalk-figure/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+
+
+Forecasts Are Tricky
+========================
+
+<img src="AppliedModelingTalk-figure/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+
+
+The Further We Get From The Training Data...
+================================================
+
+
+<img src="AppliedModelingTalk-figure/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
+
+
+
+Overfit
+=====================
+
+- Training data can lead to model overfit

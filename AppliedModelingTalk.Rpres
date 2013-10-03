@@ -155,28 +155,29 @@ A Trivial Example
 
 Consider the following:
 
-```{r}
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
 library(MASS)
 library(Matrix)
-set.seed(1814)
+set.seed(8742)
 N <- 1000
 J <- 4 ### Number of predictors (including intercept)
 G <- 5 ### Number of Multilevel Groups
-X <- matrix(rnorm(N,0,1),N,J); X[,1] <- 1
+X <- matrix(rnorm(N*J,0,2),N,J)
+X[,1] <- 1
 Sigma <- matrix(runif(J*J,-1,1),J,J)
 Sigma <- nearPD(Sigma)$mat
-diag(Sigma) <- runif(J,1,5)
-gamma <- runif(J,-.25,.25)
+#diag(Sigma) <- runif(J,1,5)
+gamma <- runif(J,-1.2,1.2)
 beta <- matrix(NA,G,J)
 for (g in 1:G) {beta[g,] <- mvrnorm(1, gamma, Sigma)}
 m <- sample(1:G, N, replace=TRUE) ### Multilevel group indicator
-y <- rowSums(beta[m,] * X) + rnorm(N,0,1.4)
+y <- rowSums(beta[m,] * X) + rnorm(N,0,.2)
 
 plotdf <- cbind(X, m, y)
 plotdf <- as.data.frame(plotdf)
 
 mod1 <- lm(y ~ V2 + V3 + V4 + factor(m), data=plotdf[plotdf$m>3,])
-mod2 <- lm(y ~ V2 + V3 + factor(m), data=plotdf[plotdf$m<=3,])
+mod2 <- lm(y ~ V2 + V3 + V4 + factor(m), data=plotdf[plotdf$m<=3,])
 
 mod1.plot <- fortify(mod1)
 mod2.plot <- fortify(mod2)
@@ -187,7 +188,9 @@ plotdf$sample[plotdf$m<=3] <- "B"
 
 
 qplot(V2, y, data=plotdf[plotdf$m>3,]) + 
-  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.1)) +
+  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.1),
+              method=lm) +
+  coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
   theme_dpi()
 
 ```
@@ -195,22 +198,173 @@ qplot(V2, y, data=plotdf[plotdf$m>3,]) +
 Consider the Test Data
 =========================
 
-```{r}
-qplot(V2, y, data=plotdf[plotdf$m<=3,]) + 
-  geom_smooth(data=mod2.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.1)) +
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+qplot(V2, y, data=plotdf[plotdf$m<=3,], alpha=I(0.6)) + 
+  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.6),
+              method=lm) +
+    coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
+  geom_smooth(linetype=2, se=FALSE, size=I(1.6), color=I("purple"))+
   theme_dpi()
-
 ```
 
 Consider the Pooled Data
 ==========================
 
-```{r}
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
 qplot(V2, y, data=plotdf, color=sample) + geom_smooth(method=lm, aes(group=1))+
   geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted, color=NULL), 
-              se=FALSE, size=I(1.1)) +  
+              se=FALSE, size=I(1.1),method=lm) +  
      geom_smooth(data=mod2.plot, aes(x=V2, y=.fitted, color=NULL), 
-              se=FALSE, size=I(1.1)) + theme_dpi()
-
+              se=FALSE, size=I(1.1),method=lm) + 
+      coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
+  theme_dpi()
 
 ```
+
+What do we learn?
+=============================
+
+- The data was generated the same
+
+
+When Could this Matter: Stocks?
+=================================
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+library('quantmod')
+library('lubridate')
+
+getSymbols("AAPL")
+AAPL$year <- year(index(AAPL))
+AAPL$yearL <- lag(AAPL$year)
+AAPL$yearSTART <- 0
+AAPL$yearSTART[AAPL$year - AAPL$yearL > 0] <- 1
+AAPL$yearL <- NULL
+AAPL$lag <- lag(AAPL$AAPL.Adjusted)
+AAPL$lag2 <- lag(AAPL$AAPL.Adjusted, 2)
+AAPL$lag3 <- lag(AAPL$AAPL.Adjusted, 3)
+AAPL$lag30 <- lag(AAPL$AAPL.Adjusted, 30)
+AAPL$lag90 <- lag(AAPL$AAPL.Adjusted, 90)
+
+plotdf <- as.data.frame(AAPL)
+plotdf$time <- row.names(plotdf)
+plotdf <- plotdf[300:1700,]
+plotdf$group <- NA
+plotdf$group[50:300] <- 1
+plotdf$group[300:500] <- 2
+
+plotdf$time2 <- as.factor(plotdf$time)
+plotdf$time2 <- as.numeric(plotdf$time2)
+
+pred.con <- loess.control(surface="direct")
+
+model1 <- loess(AAPL.Adjusted ~ time2 + lag + lag30, 
+                data=plotdf[plotdf$group==1,], 
+                control=pred.con, parametric=c("lag"))
+
+xrange <- range(plotdf$time2)
+xseq <- seq(from=xrange[1], to=xrange[2], length=nrow(plotdf))
+pred <- predict(model1, newdata = data.frame(time2 = xseq, lag=plotdf$lag, 
+                                             lag30 = plotdf$lag30,
+                                             lag90 = plotdf$lag90), se=TRUE)
+y = pred$fit
+ci <- pred$se.fit * qt(0.95 / 2 + .5, pred$df)
+ymin = y - ci
+ymax = y + ci
+loess.DF <- data.frame(x = xseq, y) #, ymin, ymax, se = pred$se.fit)
+
+model2 <- loess(AAPL.Adjusted ~ time2 + lag + lag30, 
+                data=plotdf[500:800,], 
+                control=pred.con,  parametric=c("lag"))
+
+xrange <- range(plotdf$time2)
+xseq <- seq(from=xrange[1], to=xrange[2], length=nrow(plotdf))
+pred <- predict(model2, newdata = data.frame(time2 = xseq, lag=plotdf$lag, 
+                                             lag30 = plotdf$lag30,
+                                             lag90 = plotdf$lag90), se=TRUE)
+y = pred$fit
+ci <- pred$se.fit * qt(0.95 / 2 + .5, pred$df)
+ymin = y - ci
+ymax = y + ci
+loess.DF2 <- data.frame(x = xseq, y)
+
+
+idx1 <- plotdf$time2[plotdf$yearSTART==1][5]
+idx2 <- plotdf$time2[plotdf$yearSTART==1][4]
+idx3 <- plotdf$time2[plotdf$yearSTART==1][3]
+
+
+qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+     coord_cartesian(xlim=c(0,1400), ylim=c(60,700)) +
+  geom_vline(xintercept=idx1, color="red", linetype=3) + 
+  geom_vline(xintercept=idx2, color="red", linetype=3) + 
+  geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  theme_dpi()+
+  theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank()) 
+
+```
+
+
+Forecasting Apple Stock Could be Useful
+===========================================
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+
+qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+  geom_smooth(aes_auto(loess.DF),  data=loess.DF, stat="identity", se=FALSE) +
+     coord_cartesian(xlim=c(0,800), ylim=c(60,700)) +
+  geom_vline(xintercept=idx1, color="red", linetype=3) + 
+  geom_vline(xintercept=idx2, color="red", linetype=3) + 
+  geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  theme_dpi()+
+  theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank()) 
+
+```
+
+Forecasts Are Tricky
+========================
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+  geom_smooth(aes_auto(loess.DF2),  data=loess.DF2, stat="identity", 
+              se=FALSE, color="purple") +
+     coord_cartesian(xlim=c(500,1400), ylim=c(60,700)) +
+  geom_vline(xintercept=idx1, color="red", linetype=3) + 
+  geom_vline(xintercept=idx2, color="red", linetype=3) + 
+  geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  theme_dpi()+
+  theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank()) 
+
+```
+
+The Further We Get From The Training Data...
+================================================
+
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+  geom_smooth(aes_auto(loess.DF),  data=loess.DF, stat="identity", se=FALSE) +
+  geom_smooth(aes_auto(loess.DF2),  data=loess.DF2, stat="identity", 
+              se=FALSE, color="purple") +
+     coord_cartesian(xlim=c(0,1400), ylim=c(60,700)) +
+  geom_vline(xintercept=idx1, color="red", linetype=3) + 
+  geom_vline(xintercept=idx2, color="red", linetype=3) + 
+  geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  theme_dpi()+
+  theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank()) 
+
+```
+
+
+Overfit
+=====================
+
+- Training data can lead to model overfit
