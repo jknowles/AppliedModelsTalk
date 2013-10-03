@@ -1,9 +1,40 @@
-
-
 Applied Modeling Talk
 ========================================================
 author: Jared Knowles
 date: October, 2013
+
+Overview
+===============
+
+- What are statistical models?
+- What is applied modeling?
+- What to keep in mind?
+- Why is this important?
+
+What is a model?
+===============================
+
+- An abstraction from reality
+- What features does it have?
+- What purpose does it serve?
+
+<img src="img/pictureaf1art1.jpg" title="747 Model" alt="747Model" style="display: block; margin: auto;" />
+
+Is this  a model?
+===============================
+
+<img src="img/dalek_blueprint.jpg" title="Dalek Model" alt="747Model" style="display: block; margin: auto;" />
+
+
+What is a statistical model?
+===============================
+
+- "All models are wrong, some models are useful"
+- Being wrong is a **feature of a statistical model**, the goal is to explain 
+as much data as possible with as few variables as possible
+- Statistical models are mathematical summaries of correlations and probabilities
+- The most common form is linear regression models
+
 
 Do machines really learn?
 ========================================================
