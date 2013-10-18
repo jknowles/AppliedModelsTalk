@@ -18,6 +18,17 @@ The key differences between applied modeling and statistical inference are:
 - Test and training data
 - Measures of fit
 
+
+Goals for This Talk
+========================================================
+
+1. Introduce the world of statistical models outside of 
+linear models
+2. Demonstrate the specific techniques around building predictive models
+3. Discuss the tradeoffs in applied vs. research models
+4. Show some R code!
+
+
 Applied Models and Inference
 ========================================================
 
@@ -64,3 +75,4 @@ Some Vocabulary
 
 - Data the model is fit to
 - Data the model is applied to, but not fit to, to evaluate model fit
+
