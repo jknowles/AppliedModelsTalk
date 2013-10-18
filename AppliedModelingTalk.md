@@ -178,7 +178,13 @@ Consider the Pooled Data
 What do we learn?
 =============================
 
-- The data was generated the same
+- The data was generated from the same distribution
+- The relationship among the groups iteratively shifted, so data earlier in 
+the process understated the effect coming later
+- These out of sample differences are what make forecasting tricky
+- Traditional methods rely on sampling to do this
+- How do we protect ourselves in the case when we can't sample the data we want 
+to predict because it hasn't been generated yet? 
 
 
 When Could this Matter: Stocks?
@@ -212,4 +218,13 @@ Overfit
 =====================
 
 - Training data can lead to model overfit
+- We need both methods of **f** and methods of evaluating models that 
+can insulate against overfit
+- This means different measures of model fit
 
+Outline 
+=============================
+
+- Classification measures
+- Mean Squared Error
+- Folding, cross validation, and other methods of measuring error
