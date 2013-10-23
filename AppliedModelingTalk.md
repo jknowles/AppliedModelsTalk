@@ -55,7 +55,7 @@ Applied Models and Inference
 Applied modeling and inferential statistics share many of the same concepts:
 
 - Regression estimation
-- Concerns about representative of data and samples
+- Concerns about representativeness of data and samples
 - Fear of outliers
 - Robustness and sensitivity
 
@@ -123,12 +123,16 @@ Some Vocabulary
 
 - Training data
 - Test data
+- Bias (error)
+- Variance (error)
 
 
 ***
 
 - Data the model is fit to
 - Data the model is applied to, but not fit to, to evaluate model fit
+- Refers to the amount of error due to simplifying a complex process
+- The amount the $f$ would change if fit to a different training set of data
 
 The Challenge
 =================================
@@ -146,13 +150,15 @@ concern ourselves with **test error**
 A Trivial Example
 ===============================
 
-Consider the following:
+Consider the following training data:
 
 <img src="AppliedModelingTalk-figure/unnamed-chunk-3.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" style="display: block; margin: auto;" />
 
 
 Consider the Test Data
 =========================
+
+How does our model fit the test data? 
 
 <img src="AppliedModelingTalk-figure/unnamed-chunk-4.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
 
@@ -166,7 +172,10 @@ Consider the Pooled Data
 What do we learn?
 =============================
 
-- The data was generated the same
+- The data was generated from the same function but there was a trend across 
+groups
+- Predicting from this training model leads to **bias** in our predictions
+- 
 
 
 When Could this Matter: Stocks?
@@ -200,3 +209,14 @@ Overfit
 =====================
 
 - Training data can lead to model overfit
+- Extrapolation gets harder
+- Time changes everything
+- Non-linear behaviors
+- Paradigm shifts
+
+Resources
+====================
+
+- An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. 
+- Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
+Robert Tibshirani, and Jerome Friedman. Springer
