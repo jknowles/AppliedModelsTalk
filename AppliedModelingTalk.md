@@ -219,16 +219,6 @@ The Problem
 And all of these problems are if we ignore the problems about unconditional 
 probabilities we have already discussed!
 
-Solutions - Quick and Easy
-==============================
-
-For repeated measures we can report the rate with "fragility" by showing the 
-range if 3 or 4 more students graduated or did not graduate.
-
-<img src="AppliedModelingTalk-figure/pregraph2.png" title="plot of chunk pregraph2" alt="plot of chunk pregraph2" style="display: block; margin: auto;" />
-
-
-
 Applicability
 ==========================
 
@@ -242,283 +232,81 @@ You will be asked to construct rankings and indexes all the time.
 
 Tread carefully!
 
+Solutions
+=============
 
-Solutions - Complex and More Useful
-=====================================
+1. Present rates with robustness by simulating change in rate with change in 
+unit level 
+2. Conduct ecological inference on group data to infer probabilities for 
+individual units with uncertainty
+3. Use Bayesian methods to pool across groups and appropriately estimate uncertainty for small groups, and certainty for large groups
 
-Statistical models that correct for small group bias and draw information 
-from other sources.
+Solutions - Quick and Easy
+==============================
 
-[The Radon Project](http://www.stat.columbia.edu/~radon/index.html)
+For repeated measures we can report the rate with "fragility" by showing the 
+range if 3 or 4 more students graduated or did not graduate.
 
-- An online calculator to assess your localized risk for radon based on three factors
+<img src="AppliedModelingTalk-figure/pregraph2.png" title="plot of chunk pregraph2" alt="plot of chunk pregraph2" style="display: block; margin: auto;" />
 
-1. The estimated countywide probability of severe radon exposure in your area
-2. The updated estimate based on test results of nearby neighbors (self-reported)
-3. Updated estimate based on 1, 2, and your own home test. 
 
-All weighted by your tolerance for risk and other risk factors that may be larger 
-than radon exposure. 
 
 
 
-What is a model?
-===============================
 
-- An abstraction from reality
-- What features does it have?
-- What purpose does it serve?
 
-<img src="img/pictureaf1art1.jpg" title="747 Model" alt="747Model" style="display: block; margin: auto;" />
 
-Is this  a model?
-===============================
-
-<img src="img/dalek_blueprint.jpg" title="Dalek Model" alt="747Model" style="display: block; margin: auto;" />
-
-
-What is a statistical model?
-===============================
-
-- "All models are wrong, some models are useful"
-- Being wrong is a **feature of a statistical model**, the goal is to explain 
-as much data as possible with as few variables as possible
-- Statistical models are mathematical summaries of correlations and probabilities
-- The most common form is linear regression models
-
-
-Do machines really learn?
-========================================================
-
-Applied modeling goes by many names: statistical learning, machine learning, 
-predictive analytics, and data mining. 
-
-The key differences between applied modeling and statistical inference are:
-
-- Emphasis on predictive validity
-- De-emphasis on parameter values
-- Test and training data
-- Measures of fit
-
-
-Goals for This Talk
-========================================================
-
-1. Introduce the world of statistical models outside of 
-linear models
-2. Demonstrate the specific techniques around building predictive models
-3. Discuss the tradeoffs in applied vs. research models
-4. Show some R code!
-
-
-Applied Models and Inference
-========================================================
-
-Applied modeling and inferential statistics share many of the same concepts:
-
-- Regression estimation
-- Concerns about representativeness of data and samples
-- Fear of outliers
-- Robustness and sensitivity
-
-<img src="AppliedModelingTalk-figure/unnamed-chunk-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" style="display: block; margin: auto;" />
-
-
-
-Supervised vs. Unsupervised Learning
-===========================================================
-
-A key distinction in statistical learning is that between **supervised** and 
-**unsupervised** techniques. 
-
-- **supervised** - relationship between inputs and outputs is being explored
-- **unsupervised** - the relationship among inputs is being explored, no output
-
-We will focus on **supervised** learning for the most part in this talk. 
-
-<img src="AppliedModelingTalk-figure/clusters.png" title="plot of chunk clusters" alt="plot of chunk clusters" style="display: block; margin: auto;" />
-
-
-
-Statistical Modeling
-=======================================================
-
-It is useful to remember that in statistical modeling, in the **supervised** case, we are looking at the following relationship:
-
-$$ \hat{Y} = \hat{f}(X) $$
-
-In this case $\hat{f}$ represents our estimate of the function that links $X$ and 
-$Y$. In traditional linear modeling, $\hat{f}$ takes the form:
-
-$$ \hat{Y} = \alpha + \beta(X) + \epsilon $$
-
-However, there exist limitless alternative $\hat{f}$ which we can explore. Applied modeling techniques help us expand the $\hat{f}$ space we search within.
-
-How do we choose f?
-===================================================
-
-Choosing $f$ is about tradeoffs, the most obvious is between flexibility and 
-interpretability.
-
-<img src="AppliedModelingTalk-figure/unnamed-chunk-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
-
-
-
-Why the Difference?
-========================================================
-
-Applied Models:
-
-- Provide information to users about what to expect given certain data
-- Goals for the model are defined by the needs of the users
-
-***
-
-Inferential Models: 
-
-- Seek to learn about the relationships in the data at hand
-- Focused on understanding patterns in the current data
-
-
-Some Vocabulary
-========================================================
-
-- Training data
-- Test data
-- Bias (error)
-- Variance (error)
-
-
-***
-
-- Data the model is fit to
-- Data the model is applied to, but not fit to, to evaluate model fit
-- Refers to the amount of error due to simplifying a complex process
-- The amount the $f$ would change if fit to a different training set of data
-
-
-The Challenge
-=================================
-
-- When using a statistical model to make predictions we have to think clearly 
-about the data we use to build the model, and the data we will be making 
-predictions about
-- We may build a model with high **internal validity** for the data at hand, 
-but that data may not be representative of the data the model will apply to
-- We call this the **training error** and the **test error**
-- In inferential statistics we often seek to reduce **training error** and not 
-concern ourselves with **test error**
-
-
-A Trivial Example
-===============================
-
-Consider the following training data:
-
-<img src="AppliedModelingTalk-figure/unnamed-chunk-3.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" style="display: block; margin: auto;" />
-
-
-Consider the Test Data
-=========================
-
-How does our model fit the test data? 
-
-<img src="AppliedModelingTalk-figure/unnamed-chunk-4.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
-
-
-Consider the Pooled Data
-==========================
-
-<img src="AppliedModelingTalk-figure/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
-
-
-What do we learn?
+Solutions - Interesting
 =============================
 
-- The data was generated from the same function but there was a trend across 
-groups
-- Predicting from this training model leads to **bias** in our predictions
-- The relationship among the groups iteratively shifted, so data earlier in 
-the process understated the effect coming later
-- These out of sample differences are what make forecasting tricky
-- Traditional methods rely on sampling to do this
-- How do we protect ourselves in the case when we can't sample the data we want 
-to predict because it hasn't been generated yet? 
+Without individual level data, we can use something called *ecological 
+inference* to try to understand the probability of individual behavior. 
 
 
-When Could this Matter: Stocks?
+```r
+print(head(senc[, 2:9]))
+```
+
+```
+       precinct total white black natam  dem rep non
+1       ABBOTTS   490   355   134     1  399  61  30
+2        BETHEL  1729  1497   224     8 1238 343 148
+3   BROWN MARSH  1363   817   541     5 1132 150  81
+4 CARVERS CREEK  1172   202   889    81 1032  60  80
+5       CENTRAL   470   298   170     2  379  40  51
+6         COLLY   974   784   183     7  674 205  95
+```
+
+
+Solutions - Ecological Inference
 =================================
 
-<img src="AppliedModelingTalk-figure/unnamed-chunk-6.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
 
 
 
-Forecasting Apple Stock Could be Useful
-===========================================
-
-<img src="AppliedModelingTalk-figure/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
-
-
-Forecasts Are Tricky
-========================
-
-<img src="AppliedModelingTalk-figure/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
-
-
-The Further We Get From The Training Data...
-================================================
-
-
-<img src="AppliedModelingTalk-figure/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
 
 
 
-Overfit
-=====================
-
-- Training data can lead to model overfit
-- We need both methods of **f** and methods of evaluating models that 
-can insulate against overfit
-- This means different measures of model fit
-- Extrapolation gets harder
-- Time changes everything
-- Non-linear behaviors
-- Paradigm shifts
 
 
-Measuring Fit Differently
-=============================
-
-- Classification measures
-- Mean Squared Error for the test data
-- Folding, cross validation, and other methods of measuring error
 
 
-Takeaways
-================
-
-- Linear modeling and regression is just one of many choices of modeling data
-- Model fit within the data may not provide reliable or useful results outside 
-of the data
-- Different problems call for different statistical modeling techniques
-- These techniques include different functional forms, different measures of 
-model fit, and different ways of classifying successful models
-- Models are tools to understand complex relationships
 
 
-Keep an open mind
-===============================
-
-- K Nearest Neighbors
-
-<img src="img/Map1NN.png" title="KNN Algorithm" alt="KNN" style="display: block; margin: auto;" />
 
 
-Further Resources
-====================
 
-- Signal and Noise. Nate Silver.
-- Black Swan. Nassim Taleb.
-- An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. 
-- Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
-Robert Tibshirani, and Jerome Friedman. Springer
+
+
+
+
+
+
+
+
+
+
+```
+Error in prettyNum(.Internal(format(x, trim, digits, nsmall, width, 3L,  : 
+  invalid 'digits' argument
+```

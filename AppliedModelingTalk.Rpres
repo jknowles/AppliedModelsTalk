@@ -268,6 +268,28 @@ The Problem
 And all of these problems are if we ignore the problems about unconditional 
 probabilities we have already discussed!
 
+Applicability
+==========================
+
+This is why ranking systems are suspect rating period to rating period. Simply 
+reporting the rate provides no underlying sense of the variability in the measure and 
+without also reporting the *n* count, there is no way to interpret the findings. 
+
+If you work in policy you will be asked to report means and rates all the time. 
+
+You will be asked to construct rankings and indexes all the time. 
+
+Tread carefully!
+
+Solutions
+=============
+
+1. Present rates with robustness by simulating change in rate with change in 
+unit level 
+2. Conduct ecological inference on group data to infer probabilities for 
+individual units with uncertainty
+3. Use Bayesian methods to pool across groups and appropriately estimate uncertainty for small groups, and certainty for large groups
+
 Solutions - Quick and Easy
 ==============================
 
@@ -295,19 +317,41 @@ ggplot(aes(x=factor(year), y=rate, ymin=rate_min, ymax=rate_max),data=plotdf) +
 ```
 
 
-Applicability
+
+
+```{r ecosetup, echo=FALSE, results='hide'}
+library(eiPack)
+data(senc)
+# myEI <- ei.reg(cbind(dem, rep, non) ~ cbind(black, white, natam), data=senc)
+# myEIB <- ei.reg.bayes(cbind(dem, rep, non) ~ cbind(black, white, natam), data=senc)
+
+```
+
+Solutions - Interesting
+=============================
+
+Without individual level data, we can use something called *ecological 
+inference* to try to understand the probability of individual behavior. 
+
+```{r eco1, echo=TRUE, results='markup'}
+print(head(senc[, 2:9]))
+```
+
+Solutions - Ecological Inference
+=================================
+
+```{r eco2, echo=TRUE, results='markup'}
+myEI.MD <- ei.MD.bayes(cbind(dem, rep, non) ~ cbind(black, white, natam), 
+                       data=senc)
+print(myEI.MD)
+```
+
+Solutions - Graphical
 ==========================
 
-This is why ranking systems are suspect rating period to rating period. Simply 
-reporting the rate provides no underlying sense of the variability in the measure and 
-without also reporting the *n* count, there is no way to interpret the findings. 
-
-If you work in policy you will be asked to report means and rates all the time. 
-
-You will be asked to construct rankings and indexes all the time. 
-
-Tread carefully!
-
+```{r ecoplot, echo=FALSE, fig.align='center', fig.width=11}
+cover.plot(myEI.MD, "white", "dem")
+```
 
 Solutions - Complex and More Useful
 =====================================
