@@ -66,7 +66,7 @@ Applied Models and Inference
 Applied modeling and inferential statistics share many of the same concepts:
 
 - Regression estimation
-- Concerns about representative of data and samples
+- Concerns about representativeness of data and samples
 - Fear of outliers
 - Robustness and sensitivity
 
@@ -172,12 +172,16 @@ Some Vocabulary
 
 - Training data
 - Test data
+- Bias (error)
+- Variance (error)
 
 
 ***
 
 - Data the model is fit to
 - Data the model is applied to, but not fit to, to evaluate model fit
+- Refers to the amount of error due to simplifying a complex process
+- The amount the $f$ would change if fit to a different training set of data
 
 
 The Challenge
@@ -196,7 +200,7 @@ concern ourselves with **test error**
 A Trivial Example
 ===============================
 
-Consider the following:
+Consider the following training data:
 
 ```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
 library(MASS)
@@ -241,6 +245,8 @@ qplot(V2, y, data=plotdf[plotdf$m>3,]) +
 Consider the Test Data
 =========================
 
+How does our model fit the test data? 
+
 ```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
 qplot(V2, y, data=plotdf[plotdf$m<=3,], alpha=I(0.6)) + 
   geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.6),
@@ -267,7 +273,9 @@ qplot(V2, y, data=plotdf, color=sample) + geom_smooth(method=lm, aes(group=1))+
 What do we learn?
 =============================
 
-- The data was generated from the same distribution
+- The data was generated from the same function but there was a trend across 
+groups
+- Predicting from this training model leads to **bias** in our predictions
 - The relationship among the groups iteratively shifted, so data earlier in 
 the process understated the effect coming later
 - These out of sample differences are what make forecasting tricky
@@ -382,6 +390,7 @@ qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
   geom_smooth(aes_auto(loess.DF2),  data=loess.DF2, stat="identity", 
               se=FALSE, color="purple") +
      coord_cartesian(xlim=c(500,1400), ylim=c(60,700)) +
+    geom_smooth(method="lm", linetype=2, color=I("red")) +
   geom_vline(xintercept=idx1, color="red", linetype=3) + 
   geom_vline(xintercept=idx2, color="red", linetype=3) + 
   geom_vline(xintercept=idx3, color="red", linetype=3) + 
@@ -402,6 +411,7 @@ qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
   geom_smooth(aes_auto(loess.DF2),  data=loess.DF2, stat="identity", 
               se=FALSE, color="purple") +
      coord_cartesian(xlim=c(0,1400), ylim=c(60,700)) +
+  geom_smooth(method="lm", linetype=2, color=I("red")) +
   geom_vline(xintercept=idx1, color="red", linetype=3) + 
   geom_vline(xintercept=idx2, color="red", linetype=3) + 
   geom_vline(xintercept=idx3, color="red", linetype=3) + 
@@ -420,10 +430,23 @@ Overfit
 - We need both methods of **f** and methods of evaluating models that 
 can insulate against overfit
 - This means different measures of model fit
+- Extrapolation gets harder
+- Time changes everything
+- Non-linear behaviors
+- Paradigm shifts
 
-Outline 
+
+Measuring Fit Differently
 =============================
 
 - Classification measures
 - Mean Squared Error
 - Folding, cross validation, and other methods of measuring error
+
+
+Resources
+====================
+
+- An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. 
+- Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
+Robert Tibshirani, and Jerome Friedman. Springer
