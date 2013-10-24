@@ -10,7 +10,43 @@ h1,h2,h3,h4,h5,h6 {
   color: white;
 }
 
+.reveal pre {   
+  margin-top: 0;
+  max-width: 95%;
+  border: 1px solid #ccc;
+  white-space: pre-wrap;
+  margin-bottom: 1em; 
+  color: black;
+}
 
+.reveal a:not(.image) {
+  color: red;
+  text-decoration: none;
+  -webkit-transition: color .15s ease;
+  -moz-transition: color .15s ease;
+  -ms-transition: color .15s ease;
+  -o-transition: color .15s ease;
+  transition: color .15s ease; }
+
+.reveal a:not(.image):hover {
+  color: #0000f1;
+  text-shadow: none;
+  border: none; }
+
+.reveal .roll span:after {
+  color: #fff;
+  background: #00003f; }
+
+.reveal pre code {
+  display: block; padding: 0.5em;
+  font-size: 1.6em;
+  line-height: 1.1em;
+  background-color: white;
+  overflow: visible;
+  max-height: none;
+  word-wrap: normal;
+  color: black;
+}
 .reveal .state-background {
   background: black;
 } 
@@ -297,7 +333,6 @@ For repeated measures we can report the rate with "fragility" by showing the
 range if 3 or 4 more students graduated or did not graduate.
 
 ```{r pregraph2, echo=FALSE, results='hide', fig.align='center', fig.width=11}
-library(scales)
 plotdf <- data.frame(year = c(2010, 2011, 2012), 
                      cohort = c(40, 40, 32), 
                      grads = c(36, 33, 31))
@@ -317,40 +352,27 @@ ggplot(aes(x=factor(year), y=rate, ymin=rate_min, ymax=rate_max),data=plotdf) +
 ```
 
 
-
-
-```{r ecosetup, echo=FALSE, results='hide'}
-library(eiPack)
-data(senc)
-# myEI <- ei.reg(cbind(dem, rep, non) ~ cbind(black, white, natam), data=senc)
-# myEIB <- ei.reg.bayes(cbind(dem, rep, non) ~ cbind(black, white, natam), data=senc)
-
-```
-
-Solutions - Interesting
+Solutions - Ecological Inference
 =============================
 
 Without individual level data, we can use something called *ecological 
 inference* to try to understand the probability of individual behavior. 
 
 ```{r eco1, echo=TRUE, results='markup'}
-print(head(senc[, 2:9]))
+library(eiPack)
+data(senc); senc$names <- paste(senc$county, senc$precinct, sep="-")
+print(head(senc[, 2:7],2))
 ```
 
-Solutions - Ecological Inference
-=================================
 
-```{r eco2, echo=TRUE, results='markup'}
-myEI.MD <- ei.MD.bayes(cbind(dem, rep, non) ~ cbind(black, white, natam), 
-                       data=senc)
-print(myEI.MD)
-```
-
-Solutions - Graphical
+Solutions - Graphical EI
 ==========================
 
-```{r ecoplot, echo=FALSE, fig.align='center', fig.width=11}
-cover.plot(myEI.MD, "white", "dem")
+```{r ecoplot, echo=TRUE, fig.align='center', fig.width=10, fig.height=4}
+myEI.MD <- ei.MD.bayes(cbind(dem, rep, non) ~ cbind(black, white, natam), 
+                       data=senc)
+par(bg = "white")
+cover.plot(myEI.MD, row="white", column="dem", bg="white")
 ```
 
 Solutions - Complex and More Useful
@@ -367,9 +389,7 @@ from other sources.
 2. The updated estimate based on test results of nearby neighbors (self-reported)
 3. Updated estimate based on 1, 2, and your own home test. 
 
-All weighted by your tolerance for risk and other risk factors that may be larger 
-than radon exposure. 
-
+All weighted by your tolerance for risk and other factors
 
 
 What is a model?
@@ -378,6 +398,7 @@ What is a model?
 - An abstraction from reality
 - What features does it have?
 - What purpose does it serve?
+- Who will use it?
 
 <img src="img/pictureaf1art1.jpg" title="747 Model" alt="747Model" style="display: block; margin: auto;" />
 
@@ -386,6 +407,14 @@ Is this  a model?
 
 <img src="img/dalek_blueprint.jpg" title="Dalek Model" alt="747Model" style="display: block; margin: auto;" />
 
+Goals for This Section
+========================================================
+
+1. Introduce the world of statistical models outside of 
+linear models
+2. Demonstrate the specific techniques around building predictive models
+3. Discuss the tradeoffs in applied vs. research models
+
 
 What is a statistical model?
 ===============================
@@ -393,8 +422,9 @@ What is a statistical model?
 - "All models are wrong, some models are useful"
 - Being wrong is a **feature of a statistical model**, the goal is to explain 
 as much data as possible with as few variables as possible
-- Statistical models are mathematical summaries of correlations and probabilities
-- The most common form is linear regression models
+- Statistical models are mathematical summaries of correlations and probabilities 
+of known data
+- The most common form is the linear regression model
 
 
 Do machines really learn?
@@ -405,20 +435,11 @@ predictive analytics, and data mining.
 
 The key differences between applied modeling and statistical inference are:
 
-- Emphasis on predictive validity
-- De-emphasis on parameter values
-- Test and training data
-- Measures of fit
-
-
-Goals for This Talk
-========================================================
-
-1. Introduce the world of statistical models outside of 
-linear models
-2. Demonstrate the specific techniques around building predictive models
-3. Discuss the tradeoffs in applied vs. research models
-4. Show some R code!
+- Emphasis on predictive validity for non-sample data
+- De-emphasis on parameter values in favor of prediction
+- Techniques of evaluating test and training data to balance error and variance 
+bias
+- Explicit confrontation with trade-offs between flexibility and interpretability
 
 
 Applied Models and Inference
@@ -429,45 +450,16 @@ Applied modeling and inferential statistics share many of the same concepts:
 - Regression estimation
 - Concerns about representativeness of data and samples
 - Fear of outliers
-- Robustness and sensitivity
+- Checks on robustness and sensitivity
 
 ```{r, echo=FALSE, fig.align='center', fig.height=3.5, fig.width=8}
 library(eeptools)
-qplot(speed, dist, data=cars) + theme_dpi() + geom_smooth(method='lm', se=FALSE) +
-  geom_smooth(method="loess", color=I("purple"), se=FALSE)+
-  annotate("segment", x=24, xend=24, y=120, yend=77, color="red", lty = 3, size=1.1)
+qplot(speed, dist, data=cars) + theme_dpi() + 
+  geom_smooth(method='lm', se=FALSE) +
+  geom_smooth(method="loess", color=I("purple"), se=FALSE) +
+  annotate("segment", x=24, xend=24, y=120, yend=77, 
+           color="red", lty = 3, size=1.1)
 
-```
-
-
-Supervised vs. Unsupervised Learning
-===========================================================
-
-A key distinction in statistical learning is that between **supervised** and 
-**unsupervised** techniques. 
-
-- **supervised** - relationship between inputs and outputs is being explored
-- **unsupervised** - the relationship among inputs is being explored, no output
-
-We will focus on **supervised** learning for the most part in this talk. 
-
-```{r clusters, echo=FALSE, results='hide', fig.align='center', fig.height=3, fig.width=4}
-x <- rbind(matrix(rnorm(100, sd = 0.3), ncol = 2),
-           matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2))
-colnames(x) <- c("x", "y")
-cl <- kmeans(x, 2)
-plot(x, col = cl$cluster)
-points(cl$centers, col = 1:2, pch = 8, cex = 2)
-# 
-# # sum of squares
-# ss <- function(x) sum(scale(x, scale = FALSE)^2)
-# 
-# ## cluster centers "fitted" to each obs.:
-# fitted.x <- fitted(cl);  head(fitted.x)
-# resid.x <- x - fitted(cl)
-# 
-# **Unsupervised** techniques like cluster, principal components, factor, and 
-# latent variable analysis can be very useful!
 ```
 
 
@@ -518,14 +510,17 @@ Why the Difference?
 Applied Models:
 
 - Provide information to users about what to expect given certain data
-- Goals for the model are defined by the needs of the users
+- Serve many goals including prediction of non-observed 
+outcomes, summarizing large datasets, measuring uncertainty
+- Goals for the model are defined by explicit tradeoffs
 
 ***
 
 Inferential Models: 
 
-- Seek to learn about the relationships in the data at hand
 - Focused on understanding patterns in the current data
+- Seek to understand how current data extrapolates to a population
+- Estimates population parameters from sample data to inform on relationships
 
 
 Some Vocabulary
@@ -556,93 +551,7 @@ but that data may not be representative of the data the model will apply to
 - We call this the **training error** and the **test error**
 - In inferential statistics we often seek to reduce **training error** and not 
 concern ourselves with **test error**
-
-
-A Trivial Example
-===============================
-
-Consider the following training data:
-
-```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
-library(MASS)
-library(Matrix)
-set.seed(8742)
-N <- 1000
-J <- 4 ### Number of predictors (including intercept)
-G <- 5 ### Number of Multilevel Groups
-X <- matrix(rnorm(N*J,0,2),N,J)
-X[,1] <- 1
-Sigma <- matrix(runif(J*J,-1,1),J,J)
-Sigma <- nearPD(Sigma)$mat
-#diag(Sigma) <- runif(J,1,5)
-gamma <- runif(J,-1.2,1.2)
-beta <- matrix(NA,G,J)
-for (g in 1:G) {beta[g,] <- mvrnorm(1, gamma, Sigma)}
-m <- sample(1:G, N, replace=TRUE) ### Multilevel group indicator
-y <- rowSums(beta[m,] * X) + rnorm(N,0,.2)
-
-plotdf <- cbind(X, m, y)
-plotdf <- as.data.frame(plotdf)
-
-mod1 <- lm(y ~ V2 + V3 + V4 + factor(m), data=plotdf[plotdf$m>3,])
-mod2 <- lm(y ~ V2 + V3 + V4 + factor(m), data=plotdf[plotdf$m<=3,])
-
-mod1.plot <- fortify(mod1)
-mod2.plot <- fortify(mod2)
-
-plotdf$sample <- NA
-plotdf$sample[plotdf$m>3] <- "A"
-plotdf$sample[plotdf$m<=3] <- "B"
-
-
-qplot(V2, y, data=plotdf[plotdf$m>3,]) + 
-  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.1),
-              method=lm) +
-  coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
-  theme_dpi()
-
-```
-
-Consider the Test Data
-=========================
-
-How does our model fit the test data? 
-
-```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
-qplot(V2, y, data=plotdf[plotdf$m<=3,], alpha=I(0.6)) + 
-  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.6),
-              method=lm) +
-    coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
-  geom_smooth(linetype=2, se=FALSE, size=I(1.6), color=I("purple"))+
-  theme_dpi()
-```
-
-Consider the Pooled Data
-==========================
-
-```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
-qplot(V2, y, data=plotdf, color=sample) + geom_smooth(method=lm, aes(group=1))+
-  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted, color=NULL), 
-              se=FALSE, size=I(1.1),method=lm) +  
-     geom_smooth(data=mod2.plot, aes(x=V2, y=.fitted, color=NULL), 
-              se=FALSE, size=I(1.1),method=lm) + 
-      coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
-  theme_dpi()
-
-```
-
-What do we learn?
-=============================
-
-- The data was generated from the same function but there was a trend across 
-groups
-- Predicting from this training model leads to **bias** in our predictions
-- The relationship among the groups iteratively shifted, so data earlier in 
-the process understated the effect coming later
-- These out of sample differences are what make forecasting tricky
-- Traditional methods rely on sampling to do this
-- How do we protect ourselves in the case when we can't sample the data we want 
-to predict because it hasn't been generated yet? 
+- In applied modeling we focus on finding the optimal tradeoff between **variance error** and **bias error** 
 
 
 When Could this Matter: Stocks?
@@ -710,13 +619,14 @@ loess.DF2 <- data.frame(x = xseq, y)
 idx1 <- plotdf$time2[plotdf$yearSTART==1][5]
 idx2 <- plotdf$time2[plotdf$yearSTART==1][4]
 idx3 <- plotdf$time2[plotdf$yearSTART==1][3]
-
+idx4 <- plotdf$time2[plotdf$yearSTART==1][2]
 
 qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
      coord_cartesian(xlim=c(0,1400), ylim=c(60,700)) +
   geom_vline(xintercept=idx1, color="red", linetype=3) + 
   geom_vline(xintercept=idx2, color="red", linetype=3) + 
   geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  geom_vline(xintercept=idx4, color="red", linetype=3) + 
   theme_dpi()+
   theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
         panel.grid.major.x = element_blank(), 
@@ -728,46 +638,59 @@ qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
 Forecasting Apple Stock Could be Useful
 ===========================================
 
+- Fit a model on the earlier part of the data (in blue)
+
 ```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
 
-qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
   geom_smooth(aes_auto(loess.DF),  data=loess.DF, stat="identity", se=FALSE) +
      coord_cartesian(xlim=c(0,800), ylim=c(60,700)) +
   geom_vline(xintercept=idx1, color="red", linetype=3) + 
   geom_vline(xintercept=idx2, color="red", linetype=3) + 
   geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  geom_vline(xintercept=idx4, color="red", linetype=3) + 
   theme_dpi()+
+      geom_smooth(method="lm", linetype=2, color=I("red")) +
   theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
         panel.grid.major.x = element_blank(), 
-        panel.grid.minor.x = element_blank()) 
+        panel.grid.minor.x = element_blank()) +
+  annotate("rect", xmin=50, xmax=300, ymin=-Inf, ymax=200, fill="blue", 
+           alpha=0.25) 
 
 ```
 
 Forecasts Are Tricky
 ========================
 
+- Fit another model on the middle part of the data (purple)
+
 ```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
-qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
   geom_smooth(aes_auto(loess.DF2),  data=loess.DF2, stat="identity", 
               se=FALSE, color="purple") +
-     coord_cartesian(xlim=c(500,1400), ylim=c(60,700)) +
+     coord_cartesian(xlim=c(200,1200), ylim=c(60,700)) +
     geom_smooth(method="lm", linetype=2, color=I("red")) +
   geom_vline(xintercept=idx1, color="red", linetype=3) + 
   geom_vline(xintercept=idx2, color="red", linetype=3) + 
   geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  geom_vline(xintercept=idx4, color="red", linetype=3) + 
   theme_dpi()+
   theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
         panel.grid.major.x = element_blank(), 
-        panel.grid.minor.x = element_blank()) 
+        panel.grid.minor.x = element_blank()) +
+    annotate("rect", xmin=300, xmax=500, ymin=-Inf, ymax=300, 
+             fill="purple", alpha=0.25) 
+
 
 ```
 
 The Further We Get From The Training Data...
 ================================================
 
+- Test both models on the full data!
 
 ```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
-qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
   geom_smooth(aes_auto(loess.DF),  data=loess.DF, stat="identity", se=FALSE) +
   geom_smooth(aes_auto(loess.DF2),  data=loess.DF2, stat="identity", 
               se=FALSE, color="purple") +
@@ -776,10 +699,16 @@ qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
   geom_vline(xintercept=idx1, color="red", linetype=3) + 
   geom_vline(xintercept=idx2, color="red", linetype=3) + 
   geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  geom_vline(xintercept=idx4, color="red", linetype=3) + 
   theme_dpi()+
   theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
         panel.grid.major.x = element_blank(), 
-        panel.grid.minor.x = element_blank()) 
+        panel.grid.minor.x = element_blank()) +
+  annotate("rect", xmin=50, xmax=300, ymin=-Inf, ymax=300, fill="blue", 
+           alpha=0.25) +
+    annotate("rect", xmin=300, xmax=500, ymin=-Inf, ymax=300, 
+             fill="purple", alpha=0.25) 
+
 
 ```
 
@@ -787,22 +716,25 @@ qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
 Overfit
 =====================
 
-- Training data can lead to model overfit
-- We need both methods of **f** and methods of evaluating models that 
+- Training data can lead to model overfit (the blue line)
+- Training data can lead to bias in future predictions (the purple line)
+- We need both methods of $f$ and methods of evaluating models that 
 can insulate against overfit
-- This means different measures of model fit
-- Extrapolation gets harder
-- Time changes everything
-- Non-linear behaviors
-- Paradigm shifts
+- This means different measures of model fit to choose among competing models
+- Understanding the data generation process helps inform how difficult extrapolation will be
+- Time changes everything and the process/logic of updating models is important
+- Non-linear behaviors can be right around the corner
+- Paradigm shifts occur
 
 
 Measuring Fit Differently
 =============================
 
-- Classification measures
+- Classification measures like ROC
 - Mean Squared Error for the test data
-- Folding, cross validation, and other methods of measuring error
+- Repeated folds, cross-validation, LOOCV
+- All ways to deal with robustly choosing a model that might fit the training 
+data less optimally, but it likely to be a better fit on future data
 
 
 Takeaways
@@ -828,8 +760,40 @@ Keep an open mind
 Further Resources
 ====================
 
-- Signal and Noise. Nate Silver.
-- Black Swan. Nassim Taleb.
+- The Signal and the Noise: Why So Many Predictions Fail — but Some Don't. Nate Silver. (2012). Penguin.
+- The Black Swan: Second Edition: The Impact of the Highly Improbable (2nd ed. 2010). Nassim Taleb.  Random House.
 - An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. 
 - Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
 Robert Tibshirani, and Jerome Friedman. Springer
+
+
+
+Supervised vs. Unsupervised Learning
+===========================================================
+
+A key distinction in statistical learning is that between **supervised** and 
+**unsupervised** techniques. 
+
+- **supervised** - relationship between inputs and outputs is being explored
+- **unsupervised** - the relationship among inputs is being explored, no output
+
+We will focus on **supervised** learning for the most part in this talk. 
+
+```{r clusters, echo=FALSE, results='hide', fig.align='center', fig.height=3, fig.width=4}
+x <- rbind(matrix(rnorm(100, sd = 0.3), ncol = 2),
+           matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2))
+colnames(x) <- c("x", "y")
+cl <- kmeans(x, 2)
+plot(x, col = cl$cluster)
+points(cl$centers, col = 1:2, pch = 8, cex = 2)
+# 
+# # sum of squares
+# ss <- function(x) sum(scale(x, scale = FALSE)^2)
+# 
+# ## cluster centers "fitted" to each obs.:
+# fitted.x <- fitted(cl);  head(fitted.x)
+# resid.x <- x - fitted(cl)
+# 
+# **Unsupervised** techniques like cluster, principal components, factor, and 
+# latent variable analysis can be very useful!
+```

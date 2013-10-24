@@ -11,6 +11,20 @@ Add examples about non-conditional summary stats
 Add examples about linear model extrapolation and how to guard against it
 
 
+```{r ecosetup, echo=FALSE, results='hide'}
+
+# myEI <- ei.reg(cbind(dem, rep, non) ~ cbind(black, white, natam), data=senc)
+# myEIB <- ei.reg.bayes(cbind(dem, rep, non) ~ cbind(black, white, natam), data=senc)
+
+```
+Solutions - Ecological Inference
+=================================
+
+```{r eco2, echo=TRUE, results='markup'}
+myEI.MD <- ei.MD.bayes(cbind(dem, rep, non) ~ cbind(black, white, natam), 
+                       data=senc)
+print(myEI.MD)
+```
 
 
 Philly Fed Example
@@ -25,3 +39,91 @@ Index not meant to compare or rank:
 > The size and maturity of state economies influence the relative size of economic change within a state; an older, mature economy, such as New York, tends to experience smaller percentage changes in its trend than a smaller, younger economy, such as North Dakota. Comparisons between the two are not very meaningful.
 
 [Source](http://host.madison.com/philly-fed-email/html_980929dc-27c9-11e3-bf0e-001a4bcf887a.html)
+
+
+
+A Trivial Example
+===============================
+
+Consider the following training data:
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+library(MASS)
+library(Matrix)
+set.seed(8742)
+N <- 1000
+J <- 4 ### Number of predictors (including intercept)
+G <- 5 ### Number of Multilevel Groups
+X <- matrix(rnorm(N*J,0,2),N,J)
+X[,1] <- 1
+Sigma <- matrix(runif(J*J,-1,1),J,J)
+Sigma <- nearPD(Sigma)$mat
+#diag(Sigma) <- runif(J,1,5)
+gamma <- runif(J,-1.2,1.2)
+beta <- matrix(NA,G,J)
+for (g in 1:G) {beta[g,] <- mvrnorm(1, gamma, Sigma)}
+m <- sample(1:G, N, replace=TRUE) ### Multilevel group indicator
+y <- rowSums(beta[m,] * X) + rnorm(N,0,.2)
+
+plotdf <- cbind(X, m, y)
+plotdf <- as.data.frame(plotdf)
+
+mod1 <- lm(y ~ V2 + V3 + V4 + factor(m), data=plotdf[plotdf$m>3,])
+mod2 <- lm(y ~ V2 + V3 + V4 + factor(m), data=plotdf[plotdf$m<=3,])
+
+mod1.plot <- fortify(mod1)
+mod2.plot <- fortify(mod2)
+
+plotdf$sample <- NA
+plotdf$sample[plotdf$m>3] <- "A"
+plotdf$sample[plotdf$m<=3] <- "B"
+
+
+qplot(V2, y, data=plotdf[plotdf$m>3,]) + 
+  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.1),
+              method=lm) +
+  coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
+  theme_dpi()
+
+```
+
+Consider the Test Data
+=========================
+
+How does our model fit the test data? 
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+qplot(V2, y, data=plotdf[plotdf$m<=3,], alpha=I(0.6)) + 
+  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted), se=FALSE, size=I(1.6),
+              method=lm) +
+    coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
+  geom_smooth(linetype=2, se=FALSE, size=I(1.6), color=I("purple"))+
+  theme_dpi()
+```
+
+Consider the Pooled Data
+==========================
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+qplot(V2, y, data=plotdf, color=sample) + geom_smooth(method=lm, aes(group=1))+
+  geom_smooth(data=mod1.plot, aes(x=V2, y=.fitted, color=NULL), 
+              se=FALSE, size=I(1.1),method=lm) +  
+     geom_smooth(data=mod2.plot, aes(x=V2, y=.fitted, color=NULL), 
+              se=FALSE, size=I(1.1),method=lm) + 
+      coord_cartesian(xlim=c(-7,7), ylim=c(-12,13)) +
+  theme_dpi()
+
+```
+
+What do we learn?
+=============================
+
+- The data was generated from the same function but there was a trend across 
+groups
+- Predicting from this training model leads to **bias** in our predictions
+- The relationship among the groups iteratively shifted, so data earlier in 
+the process understated the effect coming later
+- These out of sample differences are what make forecasting tricky
+- Traditional methods rely on sampling to do this
+- How do we protect ourselves in the case when we can't sample the data we want 
+to predict because it hasn't been generated yet? 
