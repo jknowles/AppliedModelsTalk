@@ -1,3 +1,41 @@
+<style>
+
+body, p, td, li, div {
+  font-size: 18pt;
+  color: white;
+}
+
+/* SECTION 4: Set heading font face, sizes, and color.
+   Diffrentiate your headings from your body text.
+   Perhaps use a large sans-serif for distinction. */
+h1,h2,h3,h4,h5,h6 {
+	text-shadow: 0 0 0 #000 !important;
+  color: white;
+}
+
+
+.reveal .state-background {
+  background: black;
+} 
+
+.reveal section p {
+  color: white;
+}
+
+.reveal section h1 {
+  color: white;
+}
+
+.reveal section h2 {
+  color: white;
+}
+
+.reveal section h3 {
+  color: white;
+}
+
+</style>
+
 Applied Modeling Talk
 ========================================================
 author: Jared Knowles
@@ -39,8 +77,8 @@ as much data as possible with as few variables as possible
 Do machines really learn?
 ========================================================
 
-Applied modeling goes by many names: statistical learning, machine learning, and 
-data mining. 
+Applied modeling goes by many names: statistical learning, machine learning, 
+predictive analytics, and data mining. 
 
 The key differences between applied modeling and statistical inference are:
 
@@ -239,11 +277,31 @@ Measuring Fit Differently
 =============================
 
 - Classification measures
-- Mean Squared Error
+- Mean Squared Error for the test data
 - Folding, cross validation, and other methods of measuring error
 
 
-Resources
+Takeaways
+================
+
+- Linear modeling and regression is just one of many choices of modeling data
+- Model fit within the data may not provide reliable or useful results outside 
+of the data
+- Different problems call for different statistical modeling techniques
+- These techniques include different functional forms, different measures of 
+model fit, and different ways of classifying successful models
+- Models are tools to understand complex relationships
+
+
+Keep an open mind
+===============================
+
+- K Nearest Neighbors
+
+<img src="img/Map1NN.png" title="KNN Algorithm" alt="KNN" style="display: block; margin: auto;" />
+
+
+Further Resources
 ====================
 
 - An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. 
