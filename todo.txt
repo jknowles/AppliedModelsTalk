@@ -10,3 +10,18 @@ Add examples about non-conditional summary stats
 
 Add examples about linear model extrapolation and how to guard against it
 
+
+
+
+Philly Fed Example
+=====================
+
+- Philadelphia Federal Reserve creates an economic index called the coincident 
+index
+- Index includes
+
+Index not meant to compare or rank:
+
+> The size and maturity of state economies influence the relative size of economic change within a state; an older, mature economy, such as New York, tends to experience smaller percentage changes in its trend than a smaller, younger economy, such as North Dakota. Comparisons between the two are not very meaningful.
+
+[Source](http://host.madison.com/philly-fed-email/html_980929dc-27c9-11e3-bf0e-001a4bcf887a.html)

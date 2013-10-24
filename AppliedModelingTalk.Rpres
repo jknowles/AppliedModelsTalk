@@ -5,9 +5,6 @@ body, p, td, li, div {
   color: white;
 }
 
-/* SECTION 4: Set heading font face, sizes, and color.
-   Diffrentiate your headings from your body text.
-   Perhaps use a large sans-serif for distinction. */
 h1,h2,h3,h4,h5,h6 {
 	text-shadow: 0 0 0 #000 !important;
   color: white;
@@ -36,18 +33,300 @@ h1,h2,h3,h4,h5,h6 {
 
 </style>
 
-Applied Modeling Talk
+Using Statistical Models to Help Policymakers Avoid Mistakes
 ========================================================
 author: Jared Knowles
-date: October, 2013
+date: October 23, 2013
 
 Overview
 ===============
 
-- What are statistical models?
-- What is applied modeling?
-- What to keep in mind?
-- Why is this important?
+- What mistakes do policymakers make?
+- What tools can be used to avoid them?
+- How do you make the case to avoid these mistakes?
+- Your toolkit needs to be broad to meet policymakers needs
+
+Mistakes We Knew We Were Making
+======================================
+
+Three vignettes will serve to ground our discussion on common mistakes in 
+the policy world using data. No policymaker is immune to making any of these 
+mistakes and even trained analysts can, do, and will make them.
+
+1. The case of the simple mean
+2. Why rates are always leading us astray?
+3. Applying models improperly
+
+
+Problems with the mean
+========================
+
+1. The mean is uninformative because it masks conditional variation
+2. The mean invites overinterpretation too often
+3. The mean too often substitutes important facts about the rest of the distribution
+
+Expecting and presenting only the mean masks too much heterogeneity and too much 
+important variability to invite systemic or productive analysis. 
+
+The Mean is Uninformative
+============================
+
+Gap
+
+- Black-white gap is 1 standard deviation
+- Economic disadvantage gap is 1 standard deviation
+- SwD gap is 1.2 standard deviations
+
+***
+
+Alternative hypothesis
+
+- Black students are more likely to be poor
+- Poor students are more likely to be black
+- Disabled students are more likely to be black or poor
+
+The Mean is Misinterpreted
+=============================
+
+Gap
+
+- Black-white gap is 1 standard deviation
+- Economic disadvantage gap is 1 standard deviation
+- SwD gap is 1.2 standard deviations
+
+***
+
+Alternative: 
+
+- All black students underperform white students
+- Economically disadvantaged students do not score highly on tests
+- Having any disability drastically reduces your student performance
+
+
+The Mean Masks too Much
+===================================
+
+Gap
+
+- Black-white gap is 1 standard deviation
+- Economic disadvantage gap is 1 standard deviation
+- SwD gap is 1.2 standard deviations
+
+***
+
+Hidden facts: 
+
+- In some schools a white-black gap exists
+- Some economically disadvantaged students are indistinguishable from their peers
+- Some disability types outperform students without disabilities
+
+The Kicker
+===========================
+
+Students who are black, economically disadvantaged, and disabled have much worse 
+student outcomes than would ever be considered from the statistics above. 
+
+Students who are white, economically disadvantaged, and disabled have much better 
+outcomes than their black peers. 
+
+These facts cannot be uncovered by simple means. 
+
+An Aside on Skew
+=============================
+
+```{r graph1, echo=FALSE, results='hide', fig.align='center', fig.width=11}
+library(eeptools)
+skews <- rgamma(10000, 3, 3)
+skews <- c(skews, rep(4, 100), rep(5, 100), rep(6, 50), rep(7, 1000))
+m1 <- mean(skews)
+m2 <- median(skews)
+
+
+qplot(skews) + theme_dpi() + geom_vline(xintercept=m1, size=I(1.1), color="red", 
+                                        linetype=2) + 
+  geom_vline(xintercept=m2, size=I(1.1), color="blue", linetype=1) +
+  labs(x="Income in $1,000s", y="Count", title="Skewed Distributions")
+
+```
+
+
+Tools to Address the Mean Problem
+===========================================
+
+- Data visualizations
+- Conditional probability models
+- Discussions
+
+```{r graph2, echo=FALSE, results='hide', fig.align='center', fig.width=11}
+black <- rnorm(1000, -1, 1)
+white <- rnorm(1000, 0, 1)
+
+plotdf <- data.frame(scores = c(black, white), race = c(rep("b", 1000), rep("w", 1000)))
+
+qplot(scores, data=plotdf, geom="density", fill=race, alpha=I(0.2)) + theme_dpi() + 
+  labs(x="Score", y="Density", title="Simulated Density Curves by Race")
+
+```
+
+Plot The Effects
+=========================
+```{r effplot1, echo=FALSE, results='hide', fig.align='center', fig.width=11}
+library(effects)
+
+mod.cowles <- glm(volunteer ~ sex + neuroticism + extraversion + neuroticism*extraversion, 
+    data=Cowles, family=binomial)
+eff.cowles <- allEffects(mod.cowles, xlevels=list(neuroticism=0:24, 
+    extraversion=seq(0, 24, 6)), given.values=c(sexmale=0.5))
+# #eff.cowles
+# 
+#   # the following are equivalent:
+# 
+# eff.ne <- effect("neuroticism*extraversion", mod.cowles)
+# Eff.ne <- Effect(c("neuroticism", "extraversion"), mod.cowles)
+# all.equal(eff.ne$fit, Eff.ne$fit)
+
+plot(effect("neuroticism*extraversion", mod.cowles))
+
+```
+
+Plot The Effects: Categorical
+==============================
+```{r effplot2, echo=FALSE, results='hide', fig.align='center', fig.width=11}
+plot(eff.cowles, 'sex', ylab="Prob(Volunteer)")
+
+```
+
+Problems with the rate
+========================
+
+1. The rate is not robust in small groups
+2. The rate masks uncertainty
+3. The rate does not provide a proper sense of inertia
+
+Rates are often turned to when wishing to explain the differences between areas 
+with different group sizes. This can be misused and cause bad policy responses. 
+
+
+Graduation rates
+=========================
+
+Exercise: Describe a school district with the lowest graduation rate in 
+your favorite state. 
+
+
+Graduation rates
+=========================
+
+What features did you use to describe it? 
+
+1. High poverty
+2. High minority
+3. Large urban core?
+
+In Wisconsin the lowest graduation rate in the state belongs to a district with 
+under 250 students in a graduating class. 
+
+Only **103** out of **228** students in Grantsburg graduated in 2011-12. 
+
+Two Comments and a Question
+===============================
+
+1. If Grantsburg graduated 50 more students in a year, it would move past several 
+other districts in the state. 
+
+2. If MPS graduated 500 less students in a year, it still would not fall below 
+Grantsburg. 
+
+Is it fair to rank Grantsburg below Milwaukee? It probably depends!
+
+Fragility of Rates
+======================
+
+Consider Prentice. 
+
+```{r pregraph, echo=FALSE, results='hide', fig.align='center', fig.width=11}
+library(scales)
+plotdf <- data.frame(year = c(2010, 2011, 2012), 
+                     cohort = c(40, 40, 32), 
+                     grads = c(36, 33, 31))
+
+
+qplot(year, grads/cohort, data=plotdf, geom="bar", stat="identity") + theme_dpi() +
+  scale_y_continuous("Graduation Rate", label=percent) + 
+  labs(title = "Prentice 4 Year Graduation Rate") + 
+  geom_hline(yintercept=0.89, color=I("red"), size=I(1.1))
+
+```
+
+The Problem
+====================
+
+1. Is Prentice above or below average?
+2. What will Prentice's rate be next year?
+3. How easy is it to move the rate?
+
+And all of these problems are if we ignore the problems about unconditional 
+probabilities we have already discussed!
+
+Solutions - Quick and Easy
+==============================
+
+For repeated measures we can report the rate with "fragility" by showing the 
+range if 3 or 4 more students graduated or did not graduate.
+
+```{r pregraph2, echo=FALSE, results='hide', fig.align='center', fig.width=11}
+library(scales)
+plotdf <- data.frame(year = c(2010, 2011, 2012), 
+                     cohort = c(40, 40, 32), 
+                     grads = c(36, 33, 31))
+
+
+plotdf$rate <- plotdf$grads/plotdf$cohort
+plotdf$rate_min <- (plotdf$grads - (.1*plotdf$grads))/plotdf$cohort
+plotdf$rate_max <- (plotdf$grads + (.1*plotdf$grads))/plotdf$cohort
+plotdf$rate_max <- ifelse(plotdf$rate_max < 1, plotdf$rate_max, 1)
+
+ggplot(aes(x=factor(year), y=rate, ymin=rate_min, ymax=rate_max),data=plotdf) + 
+  geom_pointrange(size=I(1.1)) + geom_errorbar(width=0.3, size=I(1.1)) + theme_dpi() + 
+  scale_y_continuous("Graduation Rate", label=percent, limits=c(0,1)) + 
+  labs(title = "Prentice 4 Year Graduation Rate ROBUST", x="Year") + 
+  geom_hline(yintercept=0.89, color=I("red"), size=I(1.1), linetype=2)
+
+```
+
+
+Applicability
+==========================
+
+This is why ranking systems are suspect rating period to rating period. Simply 
+reporting the rate provides no underlying sense of the variability in the measure and 
+without also reporting the *n* count, there is no way to interpret the findings. 
+
+If you work in policy you will be asked to report means and rates all the time. 
+
+You will be asked to construct rankings and indexes all the time. 
+
+Tread carefully!
+
+
+Solutions - Complex and More Useful
+=====================================
+
+Statistical models that correct for small group bias and draw information 
+from other sources.
+
+[The Radon Project](http://www.stat.columbia.edu/~radon/index.html)
+
+- An online calculator to assess your localized risk for radon based on three factors
+
+1. The estimated countywide probability of severe radon exposure in your area
+2. The updated estimate based on test results of nearby neighbors (self-reported)
+3. Updated estimate based on 1, 2, and your own home test. 
+
+All weighted by your tolerance for risk and other risk factors that may be larger 
+than radon exposure. 
+
+
 
 What is a model?
 ===============================
