@@ -1,0 +1,12 @@
+TODO: 
+
+Change to "How to Help Policy Makers Avoid Mistakes Using Models"
+
+http://www.stat.columbia.edu/~radon/index.html
+
+Add examples about county rankings in health
+
+Add examples about non-conditional summary stats
+
+Add examples about linear model extrapolation and how to guard against it
+
