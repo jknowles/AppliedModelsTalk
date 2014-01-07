@@ -147,15 +147,20 @@ Outline
 - Applying Models Beyond the Journal Article
 
 
+What is a model?
+===============================
+
+<img src="img/Watson-Crick-DNA-model.jpg" title="Watson and Crick" alt="DNA" style="display: block; margin: auto;" />
+
 What is a statistical model?
 ===============================
 
-- "All models are wrong, some models are useful"
-- Being wrong is a **feature of a statistical model**, the goal is to explain 
-as much data as possible with as few variables as possible
+- "All models are wrong, some models are useful" ~ George Box
 - Statistical models are mathematical summaries of correlations and probabilities 
 of known data
-- The most common form is the linear regression model
+- Being wrong is a **feature of a statistical model**, the goal is to explain 
+as much data as possible with as few variables as possible
+- The most common in the social sciences is the linear regression model
 
 Statistical Modeling
 =======================================================
@@ -255,6 +260,130 @@ Preparing Data
 Evaluating Model Fit
 ==================================================
 
+- A **very brief** model comparison review:
+- Nested model tests: 
+  * F test and Likelihood ratio tests (restricted and unrestricted model)
+- Same sample tests:  
+  * AIC, BIC, etc. (different penalties for model parameters)
+- Yadda yadda
+- Evaluating model fit and multiple model comparison becomes much more simple 
+when you use a validation data set
+
+Confusion Matrix
+======================
+<table>
+  		<tr>
+				<td colspan="2" rowspan="2"></td>
+				<td colspan="2" style="background-color:#1b85b8; border: 2px solid #aaa">Actual</td>			
+			</tr>
+			<tr>
+				<td>Negative</td>
+				<td>Positive</td>
+			</tr>
+			<tr>
+				<td rowspan="2" style="background-color:#ae5a41; border: 2px solid #aaa">Predicted</td>
+				<td>Negative</td>
+				<td><b>a</b></td>
+				<td><b>b</b></td>
+			</tr>
+			<tr>
+				<td>Positive</td>
+				<td><b>c</b></td>
+				<td><b>d</b></td>
+			</tr>
+		</table>
+    
+Some performance metrics we can use:
+- Precision (positive predictive value) = $\frac{a}{(a+b)}$
+- Sensitivity (recall) = $\frac{a}{(a+c)}$
+- Specificity (negative predictive value) = $\frac{d}{(b+d)}$
+- False alarm (1-specificity) = $\frac{b}{(b+d)}$
+
+Confusion Matrix
+======================
+<table>
+    	<tr>
+				<td colspan="2" rowspan="2"></td>
+				<td colspan="2" style="background-color:#1b85b8; border: 2px solid #aaa">Actual</td>			
+			</tr>
+			<tr>
+				<td>Negative</td>
+				<td>Positive</td>
+			</tr>
+			<tr>
+				<td rowspan="2" style="background-color:#ae5a41; border: 2px solid #aaa">Predicted</td>
+				<td>Negative</td>
+				<td  style="background-color:#c3cb71; border: 2px solid #ead61c"><b>a</b></td>
+				<td  style="background-color:#c3cb71; border: 2px solid #ead61c"><b>b</b></td>
+			</tr>
+			<tr>
+				<td>Positive</td>
+				<td><b>c</b></td>
+				<td><b>d</b></td>
+			</tr>
+		</table>
+    
+
+Positive predicted value
+
+Confusion Matrix
+======================
+<table>
+      <tr>
+				<td colspan="2" rowspan="2"></td>
+				<td colspan="2" style="background-color:#1b85b8; border: 2px solid #aaa">Actual</td>			
+			</tr>
+			<tr>
+				<td>Negative</td>
+				<td>Positive</td>
+			</tr>
+			<tr>
+				<td rowspan="2" style="background-color:#ae5a41; border: 2px solid #aaa">Predicted</td>
+				<td>Negative</td>
+				<td  style="background-color:#c3cb71; border: 2px solid #ead61c"><b>a</b></td>
+				<td ><b>b</b></td>
+			</tr>
+			<tr>
+				<td>Positive</td>
+				<td style="background-color:#c3cb71; border: 2px solid #ead61c"><b>c</b></td>
+				<td><b>d</b></td>
+			</tr>
+		</table>
+    
+
+Sensitivity
+
+
+Confusion Matrix
+======================
+<table>
+      <tr>
+  			<td colspan="2" rowspan="2"></td>
+				<td colspan="2" style="background-color:#1b85b8; border: 2px solid #aaa">Actual</td>			
+			</tr>
+			<tr>
+				<td>Negative</td>
+				<td>Positive</td>
+			</tr>
+			<tr>
+				<td rowspan="2" style="background-color:#ae5a41; border: 2px solid #aaa">Predicted</td>
+				<td>Negative</td>
+				<td><b>a</b></td>
+				<td style="background-color:#c3cb71; border: 2px solid #ead61c"><b>b</b></td>
+			</tr>
+			<tr>
+				<td>Positive</td>
+				<td><b>c</b></td>
+				<td style="background-color:#c3cb71; border: 2px solid #ead61c"><b>d</b></td>
+			</tr>
+		</table>
+    
+
+Specificity and false alarm
+
+Outline
+===================
+
 1. Training and test fit
 2. Classification measures
 3. Cross-validation
@@ -311,12 +440,18 @@ Missing Data Issues
 ==================================================
 
 
+Credits
+====================
+- Some of the figures in this presentation are taken from "An Introduction to 
+Statistical Learning, with applications in R"  (Springer, 2013) with permission 
+from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani
+- Watson and Crick photo from: [http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg](http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg)
 
 Further Resources
 ====================
 
 - The Signal and the Noise: Why So Many Predictions Fail — but Some Don't. Nate Silver. (2012). Penguin.
 - The Black Swan: Second Edition: The Impact of the Highly Improbable (2nd ed. 2010). Nassim Taleb.  Random House.
-- An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. 
+- An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. [Get the book](http://www-bcf.usc.edu/~gareth/ISL/index.html)
 - Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
 Robert Tibshirani, and Jerome Friedman. Springer
