@@ -137,6 +137,8 @@ Some Trends
 - Schools are increasingly being asked to provide more services. 
 - Policy makers increasingly asked to justify their policies with projections. 
 - Timelines are speeding up!
+- People are talking about things like "data science" and "big data" (even NSF)
+- Academics have to explain their work to a growing list of stakeholders. 
 
 Outline
 =====================================================
@@ -161,6 +163,35 @@ of known data
 - Being wrong is a **feature of a statistical model**, the goal is to explain 
 as much data as possible with as few variables as possible
 - The most common in the social sciences is the linear regression model
+- Sometimes the goal is **inference** and other times it is **prediction**
+- In statistical learning we can think of **supervised** and **unsupervised** cases
+
+An Aside on Unsupervised Models
+=====================================
+
+```{r clusters, echo=FALSE, results='hide', fig.align='center', fig.height=4.5, fig.width=6, dev.args=list(bg="white")}
+x <- rbind(matrix(rnorm(100, sd = 0.3), ncol = 2),
+           matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2))
+colnames(x) <- c("x", "y")
+cl <- kmeans(x, 2)
+par(bg = 'white')
+plot(x, col = cl$cluster)
+points(cl$centers, col = 1:2, pch = 8, cex = 2)
+# 
+# # sum of squares
+# ss <- function(x) sum(scale(x, scale = FALSE)^2)
+# 
+# ## cluster centers "fitted" to each obs.:
+# fitted.x <- fitted(cl);  head(fitted.x)
+# resid.x <- x - fitted(cl)
+# 
+# **Unsupervised** techniques like cluster, principal components, factor, and 
+# latent variable analysis can be very useful!
+```
+
+- These are familiar techniques for dimension reduction like cluster analysis, factor 
+analysis, or principal components analysis
+- Can be useful for starting an analysis, looking for structure
 
 Statistical Modeling
 =======================================================
@@ -199,7 +230,7 @@ qplot(x, y, geom='text', label=labs) + theme_classic() +
   theme(axis.text=element_blank(), axis.ticks=element_blank())
 ```
 
-Figure adapted from James et al. 2013 (figure 2.7)
+<small>Figure adapted from James et al. 2013 (figure 2.7)</small>
 
 Why the Difference?
 ========================================================
@@ -250,24 +281,223 @@ but that data may not be representative of the data the model will apply to
 concern ourselves with **test error**
 - In applied modeling we focus on finding the optimal tradeoff between **variance error** and **bias error** 
 
-Preparing Data
-=================================================
+A Simple Motivating Example
+=================================
 
-1. Recoding variables
-2. Centering and scaling
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+library('quantmod')
+library('lubridate')
+library('eeptools')
 
+getSymbols("AAPL")
+AAPL$year <- year(index(AAPL))
+AAPL$yearL <- lag(AAPL$year)
+AAPL$yearSTART <- 0
+AAPL$yearSTART[AAPL$year - AAPL$yearL > 0] <- 1
+AAPL$yearL <- NULL
+AAPL$lag <- lag(AAPL$AAPL.Adjusted)
+AAPL$lag2 <- lag(AAPL$AAPL.Adjusted, 2)
+AAPL$lag3 <- lag(AAPL$AAPL.Adjusted, 3)
+AAPL$lag30 <- lag(AAPL$AAPL.Adjusted, 30)
+AAPL$lag90 <- lag(AAPL$AAPL.Adjusted, 90)
+
+plotdf <- as.data.frame(AAPL)
+plotdf$time <- row.names(plotdf)
+plotdf <- plotdf[300:1700,]
+plotdf$group <- NA
+plotdf$group[50:300] <- 1
+plotdf$group[300:500] <- 2
+
+plotdf$time2 <- as.factor(plotdf$time)
+plotdf$time2 <- as.numeric(plotdf$time2)
+
+pred.con <- loess.control(surface="direct")
+
+model1 <- loess(AAPL.Adjusted ~ time2 + lag + lag30, 
+                data=plotdf[plotdf$group==1,], 
+                control=pred.con, parametric=c("lag"))
+
+xrange <- range(plotdf$time2)
+xseq <- seq(from=xrange[1], to=xrange[2], length=nrow(plotdf))
+pred <- predict(model1, newdata = data.frame(time2 = xseq, lag=plotdf$lag, 
+                                             lag30 = plotdf$lag30,
+                                             lag90 = plotdf$lag90), se=TRUE)
+y = pred$fit
+ci <- pred$se.fit * qt(0.95 / 2 + .5, pred$df)
+ymin = y - ci
+ymax = y + ci
+loess.DF <- data.frame(x = xseq, y) #, ymin, ymax, se = pred$se.fit)
+
+model2 <- loess(AAPL.Adjusted ~ time2 + lag + lag30, 
+                data=plotdf[500:800,], 
+                control=pred.con,  parametric=c("lag"))
+
+xrange <- range(plotdf$time2)
+xseq <- seq(from=xrange[1], to=xrange[2], length=nrow(plotdf))
+pred <- predict(model2, newdata = data.frame(time2 = xseq, lag=plotdf$lag, 
+                                             lag30 = plotdf$lag30,
+                                             lag90 = plotdf$lag90), se=TRUE)
+y = pred$fit
+ci <- pred$se.fit * qt(0.95 / 2 + .5, pred$df)
+ymin = y - ci
+ymax = y + ci
+loess.DF2 <- data.frame(x = xseq, y)
+
+
+idx1 <- plotdf$time2[plotdf$yearSTART==1][5]
+idx2 <- plotdf$time2[plotdf$yearSTART==1][4]
+idx3 <- plotdf$time2[plotdf$yearSTART==1][3]
+idx4 <- plotdf$time2[plotdf$yearSTART==1][2]
+idx5 <- plotdf$time2[plotdf$yearSTART==1][1]
+
+qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+     coord_cartesian(xlim=c(0,1400), ylim=c(60,700)) +
+  geom_vline(xintercept=idx1, color="red", linetype=3) + 
+  geom_vline(xintercept=idx2, color="red", linetype=3) + 
+  geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  geom_vline(xintercept=idx4, color="red", linetype=3) + 
+  geom_vline(xintercept=idx5, color="red", linetype=3) + 
+  theme_dpi()+
+  theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank()) + 
+  labs(x="Time", y="Adjusted Value", title="Apple Stock Values from 2008-2013")
+
+```
+
+
+Forecasting Apple Stock Could be Useful
+===========================================
+
+- Fit a model on the earlier part of the data (in blue)
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+
+qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+  geom_smooth(aes_auto(loess.DF),  data=loess.DF, stat="identity", se=FALSE) +
+     coord_cartesian(xlim=c(0,800), ylim=c(60,700)) +
+  geom_vline(xintercept=idx1, color="red", linetype=3) + 
+  geom_vline(xintercept=idx2, color="red", linetype=3) + 
+  geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  geom_vline(xintercept=idx4, color="red", linetype=3) + 
+  geom_vline(xintercept=idx5, color="red", linetype=3) + 
+  theme_dpi()+
+      geom_smooth(method="lm", linetype=2, color=I("red")) +
+  theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank()) +
+  annotate("rect", xmin=50, xmax=300, ymin=-Inf, ymax=200, fill="blue", 
+           alpha=0.25)  + 
+  labs(x="Time", y="Adjusted Value", title="Apple Stock Values from 2008-2011")
+
+```
+
+Forecasts Are Tricky
+========================
+
+- Fit another model on the middle part of the data (purple)
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+  geom_smooth(aes_auto(loess.DF2),  data=loess.DF2, stat="identity", 
+              se=FALSE, color="purple") +
+     coord_cartesian(xlim=c(200,1200), ylim=c(60,700)) +
+    geom_smooth(method="lm", linetype=2, color=I("red")) +
+  geom_vline(xintercept=idx1, color="red", linetype=3) + 
+  geom_vline(xintercept=idx2, color="red", linetype=3) + 
+  geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  geom_vline(xintercept=idx4, color="red", linetype=3) + 
+  geom_vline(xintercept=idx5, color="red", linetype=3) + 
+  theme_dpi()+
+  theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank()) +
+    annotate("rect", xmin=500, xmax=800, ymin=-Inf, ymax=400, 
+             fill="purple", alpha=0.25) + 
+  labs(x="Time", y="Adjusted Value", title="Apple Stock Values from 2008-2013")
+
+
+```
 
 Evaluating Model Fit
 ==================================================
 
+How do we know how well our models fit?
+
 - A **very brief** model comparison review:
+- $\\R^2$ - ratio of explained variation to total variation (generally)
 - Nested model tests: 
   * F test and Likelihood ratio tests (restricted and unrestricted model)
 - Same sample tests:  
   * AIC, BIC, etc. (different penalties for model parameters)
-- Yadda yadda
-- Evaluating model fit and multiple model comparison becomes much more simple 
-when you use a validation data set
+- These don't give us a sense of how the model will do on **new** data, and they 
+are not easy to explain!
+
+Predicting New Data
+================================================
+
+- Test both models on the full data!
+
+```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
+qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
+  geom_smooth(aes_auto(loess.DF),  data=loess.DF, stat="identity", se=FALSE) +
+  geom_smooth(aes_auto(loess.DF2),  data=loess.DF2, stat="identity", 
+              se=FALSE, color="purple") +
+     coord_cartesian(xlim=c(0,1400), ylim=c(60,700)) +
+  geom_smooth(method="lm", linetype=2, color=I("red")) +
+  geom_vline(xintercept=idx1, color="red", linetype=3) + 
+  geom_vline(xintercept=idx2, color="red", linetype=3) + 
+  geom_vline(xintercept=idx3, color="red", linetype=3) + 
+  geom_vline(xintercept=idx4, color="red", linetype=3) + 
+  geom_vline(xintercept=idx5, color="red", linetype=3) + 
+  theme_dpi()+
+  theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank()) +
+  annotate("rect", xmin=50, xmax=300, ymin=-Inf, ymax=400, fill="blue", 
+           alpha=0.25) +
+    annotate("rect", xmin=500, xmax=800, ymin=-Inf, ymax=400, 
+             fill="purple", alpha=0.25)
+  labs(x="Time", y="Adjusted Value", title="Apple Stock Values from 2008-2013")
+
+
+```
+
+The Bias - Variance Tradeoff
+=============================================
+
+- The purple and blue models are identical except each was "trained" on different 
+data, the difference between them is variance
+- Both methods have the same bias, but the linear model has a different bias - 
+a feature of the flexibility in the model
+- Less flexible models will have more bias, but are less variable in response to 
+the data they are trained on
+
+
+
+Model fit = Fit to signal + fit to noise
+============================================
+
+- Training data can lead to model overfit (the blue line)
+- Training data can lead to bias in future predictions (the purple line)
+- We need both methods of $f$ and methods of evaluating models that 
+can insulate against overfit
+- This means different measures of model fit to choose among competing models
+- Understanding the data generation process helps inform how difficult extrapolation will be
+- Time changes everything and the process/logic of updating models is important
+- Non-linear behaviors can be right around the corner
+- Paradigm shifts occur
+
+
+Measuring Fit Differently
+=============================
+
+- Classification measures like ROC
+- Mean Squared Error for the test data
+- Repeated folds, cross-validation, LOOCV
+- All ways to deal with robustly choosing a model that might fit the training 
+data less optimally, but it likely to be a better fit on future data
+
 
 Confusion Matrix
 ======================
@@ -294,10 +524,44 @@ Confusion Matrix
 		</table>
     
 Some performance metrics we can use:
+- Accuracy: $\frac{(a+d)}{(a+b+c+d)}$
 - Precision (positive predictive value) = $\frac{a}{(a+b)}$
 - Sensitivity (recall) = $\frac{a}{(a+c)}$
 - Specificity (negative predictive value) = $\frac{d}{(b+d)}$
 - False alarm (1-specificity) = $\frac{b}{(b+d)}$
+
+Confusion Matrix
+======================
+<table>
+      <tr>
+				<td colspan="2" rowspan="2"></td>
+				<td colspan="2" style="background-color:#1b85b8; border: 2px solid #aaa">Actual</td>			
+			</tr>
+			<tr>
+				<td>Negative</td>
+				<td>Positive</td>
+			</tr>
+			<tr>
+				<td rowspan="2" style="background-color:#ae5a41; border: 2px solid #aaa">Predicted</td>
+				<td>Negative</td>
+				<td  style="background-color:#c3cb71; border: 2px solid #ead61c"><b>a</b></td>
+				<td><b>b</b></td>
+			</tr>
+			<tr>
+				<td>Positive</td>
+				<td><b>c</b></td>
+				<td style="background-color:#c3cb71; border: 2px solid #ead61c"><b>d</b></td>
+			</tr>
+		</table>
+    
+
+Accuracy: $\frac{(a+d)}{(a+b+c+d)}$
+
+Accuracy is a good measure if our classes are fairly balanced and we care about 
+overall correctly dividing the data into the groups. 
+
+If one group is much larger than another though, the most accurate model may not 
+be the model that most correctly classifies the group we care about. (CITATION)
 
 Confusion Matrix
 ======================
@@ -324,7 +588,12 @@ Confusion Matrix
 		</table>
     
 
-Positive predicted value
+Precision (negative predictive value) = $\frac{a}{(a+b)}$
+
+- Of all the cases we predict to be negative, what proportion actually are?
+- If we are interested in the negative class, then this is a very useful metric 
+to understand how good we are at identifying this group. Useful if this class is a rare 
+class.
 
 Confusion Matrix
 ======================
@@ -351,8 +620,12 @@ Confusion Matrix
 		</table>
     
 
-Sensitivity
+Sensitivity (recall) = $\frac{a}{(a+c)}$
 
+- Of all the negative cases, what percentage do we correctly identify (recall)?
+- Useful if we are interested in rare-event models where we want to accurately 
+identify rare events, and are less worried about how accurate we are with the modal 
+or common case. 
 
 Confusion Matrix
 ======================
@@ -379,7 +652,14 @@ Confusion Matrix
 		</table>
     
 
-Specificity and false alarm
+Specificity (positive predictive value) = $\frac{d}{(b+d)}$
+
+False alarm (1-specificity) = $\frac{b}{(b+d)}$
+
+- Of all the positive cases, what proportion actually do we predict correctly?
+- If we are interested in one class, this metric is either interesting on its own, 
+or as the balancing metric (false alarm) that we seek to hold constant while 
+increasing our sensitivity. 
 
 Outline
 ===================
@@ -431,10 +711,19 @@ qplot(1-specificity, sensitivity,data=ews, shape=flag, size=I(4),
 
 ```
 
-Adapted from Bowers and Sprott 2013
+<small>Adapted from Bowers and Sprott 2013</small>
+
 
 What Changes When a Model is Actually Used?
 ==================================================
+
+
+Preparing Data
+=================================================
+
+1. Recoding variables
+2. Centering and scaling
+
 
 Missing Data Issues
 ==================================================

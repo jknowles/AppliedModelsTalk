@@ -137,6 +137,8 @@ Some Trends
 - Schools are increasingly being asked to provide more services. 
 - Policy makers increasingly asked to justify their policies with projections. 
 - Timelines are speeding up!
+- People are talking about things like "data science" and "big data" (even NSF)
+- Academics have to explain their work to a growing list of stakeholders. 
 
 Outline
 =====================================================
@@ -161,6 +163,18 @@ of known data
 - Being wrong is a **feature of a statistical model**, the goal is to explain 
 as much data as possible with as few variables as possible
 - The most common in the social sciences is the linear regression model
+- Sometimes the goal is **inference** and other times it is **prediction**
+- In statistical learning we can think of **supervised** and **unsupervised** cases
+
+An Aside on Unsupervised Models
+=====================================
+
+<img src="AppliedModelinginEducation-figure/clusters.png" title="plot of chunk clusters" alt="plot of chunk clusters" style="display: block; margin: auto;" />
+
+
+- These are familiar techniques for dimension reduction like cluster analysis, factor 
+analysis, or principal components analysis
+- Can be useful for starting an analysis, looking for structure
 
 Statistical Modeling
 =======================================================
@@ -182,7 +196,7 @@ Functional forms
 <img src="AppliedModelinginEducation-figure/unnamed-chunk-1.png" title="Figure Adapted from James et al. 2013" alt="Figure Adapted from James et al. 2013" style="display: block; margin: auto;" />
 
 
-Figure adapted from James et al. 2013 (figure 2.7)
+<small>Figure adapted from James et al. 2013 (figure 2.7)</small>
 
 Why the Difference?
 ========================================================
@@ -233,24 +247,86 @@ but that data may not be representative of the data the model will apply to
 concern ourselves with **test error**
 - In applied modeling we focus on finding the optimal tradeoff between **variance error** and **bias error** 
 
-Preparing Data
-=================================================
+A Simple Motivating Example
+=================================
 
-1. Recoding variables
-2. Centering and scaling
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
+
+
+
+Forecasting Apple Stock Could be Useful
+===========================================
+
+- Fit a model on the earlier part of the data (in blue)
+
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-3.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" style="display: block; margin: auto;" />
+
+
+Forecasts Are Tricky
+========================
+
+- Fit another model on the middle part of the data (purple)
+
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-4.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
 
 
 Evaluating Model Fit
 ==================================================
 
+How do we know how well our models fit?
+
 - A **very brief** model comparison review:
+- $\\R^2$ - ratio of explained variation to total variation (generally)
 - Nested model tests: 
   * F test and Likelihood ratio tests (restricted and unrestricted model)
 - Same sample tests:  
   * AIC, BIC, etc. (different penalties for model parameters)
-- Yadda yadda
-- Evaluating model fit and multiple model comparison becomes much more simple 
-when you use a validation data set
+- These don't give us a sense of how the model will do on **new** data, and they 
+are not easy to explain!
+
+Predicting New Data
+================================================
+
+- Test both models on the full data!
+
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
+
+
+The Bias - Variance Tradeoff
+=============================================
+
+- The purple and blue models are identical except each was "trained" on different 
+data, the difference between them is variance
+- Both methods have the same bias, but the linear model has a different bias - 
+a feature of the flexibility in the model
+- Less flexible models will have more bias, but are less variable in response to 
+the data they are trained on
+
+
+
+Model fit = Fit to signal + fit to noise
+============================================
+
+- Training data can lead to model overfit (the blue line)
+- Training data can lead to bias in future predictions (the purple line)
+- We need both methods of $f$ and methods of evaluating models that 
+can insulate against overfit
+- This means different measures of model fit to choose among competing models
+- Understanding the data generation process helps inform how difficult extrapolation will be
+- Time changes everything and the process/logic of updating models is important
+- Non-linear behaviors can be right around the corner
+- Paradigm shifts occur
+
+
+Measuring Fit Differently
+=============================
+
+- Classification measures like ROC
+- Mean Squared Error for the test data
+- Repeated folds, cross-validation, LOOCV
+- All ways to deal with robustly choosing a model that might fit the training 
+data less optimally, but it likely to be a better fit on future data
+
 
 Confusion Matrix
 ======================
@@ -277,10 +353,44 @@ Confusion Matrix
 		</table>
     
 Some performance metrics we can use:
+- Accuracy: $\frac{(a+d)}{(a+b+c+d)}$
 - Precision (positive predictive value) = $\frac{a}{(a+b)}$
 - Sensitivity (recall) = $\frac{a}{(a+c)}$
 - Specificity (negative predictive value) = $\frac{d}{(b+d)}$
 - False alarm (1-specificity) = $\frac{b}{(b+d)}$
+
+Confusion Matrix
+======================
+<table>
+      <tr>
+				<td colspan="2" rowspan="2"></td>
+				<td colspan="2" style="background-color:#1b85b8; border: 2px solid #aaa">Actual</td>			
+			</tr>
+			<tr>
+				<td>Negative</td>
+				<td>Positive</td>
+			</tr>
+			<tr>
+				<td rowspan="2" style="background-color:#ae5a41; border: 2px solid #aaa">Predicted</td>
+				<td>Negative</td>
+				<td  style="background-color:#c3cb71; border: 2px solid #ead61c"><b>a</b></td>
+				<td><b>b</b></td>
+			</tr>
+			<tr>
+				<td>Positive</td>
+				<td><b>c</b></td>
+				<td style="background-color:#c3cb71; border: 2px solid #ead61c"><b>d</b></td>
+			</tr>
+		</table>
+    
+
+Accuracy: $\frac{(a+d)}{(a+b+c+d)}$
+
+Accuracy is a good measure if our classes are fairly balanced and we care about 
+overall correctly dividing the data into the groups. 
+
+If one group is much larger than another though, the most accurate model may not 
+be the model that most correctly classifies the group we care about. (CITATION)
 
 Confusion Matrix
 ======================
@@ -307,7 +417,12 @@ Confusion Matrix
 		</table>
     
 
-Positive predicted value
+Precision (negative predictive value) = $\frac{a}{(a+b)}$
+
+- Of all the cases we predict to be negative, what proportion actually are?
+- If we are interested in the negative class, then this is a very useful metric 
+to understand how good we are at identifying this group. Useful if this class is a rare 
+class.
 
 Confusion Matrix
 ======================
@@ -334,8 +449,12 @@ Confusion Matrix
 		</table>
     
 
-Sensitivity
+Sensitivity (recall) = $\frac{a}{(a+c)}$
 
+- Of all the negative cases, what percentage do we correctly identify (recall)?
+- Useful if we are interested in rare-event models where we want to accurately 
+identify rare events, and are less worried about how accurate we are with the modal 
+or common case. 
 
 Confusion Matrix
 ======================
@@ -362,7 +481,14 @@ Confusion Matrix
 		</table>
     
 
-Specificity and false alarm
+Specificity (positive predictive value) = $\frac{d}{(b+d)}$
+
+False alarm (1-specificity) = $\frac{b}{(b+d)}$
+
+- Of all the positive cases, what proportion actually do we predict correctly?
+- If we are interested in one class, this metric is either interesting on its own, 
+or as the balancing metric (false alarm) that we seek to hold constant while 
+increasing our sensitivity. 
 
 Outline
 ===================
@@ -376,13 +502,22 @@ Outline
 Model Fit
 ==================================================
 
-<img src="AppliedModelinginEducation-figure/unnamed-chunk-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-6.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
 
 
-Adapted from Bowers and Sprott 2013
+<small>Adapted from Bowers and Sprott 2013</small>
+
 
 What Changes When a Model is Actually Used?
 ==================================================
+
+
+Preparing Data
+=================================================
+
+1. Recoding variables
+2. Centering and scaling
+
 
 Missing Data Issues
 ==================================================
