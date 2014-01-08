@@ -14,6 +14,9 @@ h1,h2,h3,h4,h5,h6 {
    background: black;
 }
 
+span.centerImage {
+     text-align: center;
+}
 .section .reveal h2,
 .section .reveal h3,
 .section .reveal p {
@@ -140,6 +143,24 @@ Some Trends
 - People are talking about things like "data science" and "big data" (even NSF)
 - Academics have to explain their work to a growing list of stakeholders. 
 
+Computers
+=====================================================
+
+- Most of your statistics books were written by people who used this:
+
+<img style="height:auto; width:auto; max-width:400px; max-height:300px; display: block; margin:0 auto;" src="img/mainframes.jpg" title="Mainframe" alt="FP"/>
+
+- We will be working in an era unlike all previous generations of statisticians -- 
+computers are going to continually get better and better at solving problems
+
+Unparalleled Increase in Computation Leads to Different Solutions
+======================================================================
+
+
+<img src="img/float-point-perf.png" title="Single Thread FP" alt="FP" style="display: block; margin:0 auto;" />
+
+<small>Now we can bootstrap, use MCMC for Bayesian methods, and do multi-model inference</small>
+
 Outline
 =====================================================
 
@@ -187,6 +208,9 @@ points(cl$centers, col = 1:2, pch = 8, cex = 2)
 # 
 # **Unsupervised** techniques like cluster, principal components, factor, and 
 # latent variable analysis can be very useful!
+# 
+# spec <- read.table("data/benchmarks.txt", header=TRUE, sep="\t")
+# spec2 <- read.table("data/summaries.txt", header=TRUE, sep="\t")
 ```
 
 - These are familiar techniques for dimension reduction like cluster analysis, factor 
@@ -232,6 +256,45 @@ qplot(x, y, geom='text', label=labs) + theme_classic() +
 
 <small>Figure adapted from James et al. 2013 (figure 2.7)</small>
 
+Statistical Learning or Statistical Inference?
+=================================================================
+
+The line between statistical learning and statistical inference has always been 
+blurry and unclear. A few questions can help:
+<small>
+- Am I interested in accurately estimating unobserved observations based on what 
+I have learned in my sample?
+- Am I interested in the relationships among the parameters in my sample because 
+of a theory I am testing, or because of how they can explain an outcome I am 
+interested in?
+- Is the data I am using common and relatively untransformed? Will new data be 
+created regularly that I can fit the same model to and update?
+</small>
+
+Predicting Dropout
+=====================================================
+
+Applied Model:
+<small>
+- Data: Common, transactional, regularly collected at specific timepoints
+- Many cohorts with common data
+- Interested in learning which students today are likely to dropout in the future
+- Want: Confident predictions on likely graduation of new students, used to decide how
+to allocate resources and services to students
+</small>
+
+***
+
+Inferential Model:
+<small>
+- Data: national survey data, unlikely to be collected on future observations 
+- One cohort is followed in the data set
+- Interested in learning if social and emotional concerns are more important than 
+academic success in predicting graduation
+- Want: unbiased and precise estimates of parameters and if possible ability to make 
+causal claims
+</small>
+
 Why the Difference?
 ========================================================
 
@@ -248,7 +311,8 @@ Inferential Models:
 
 - Focused on understanding patterns in the current data
 - Seek to understand how current data extrapolates to a population
-- Estimates population parameters from sample data to inform on relationships
+- Estimates population parameters from sample data about relationships between 
+inputs and outputs
 
 
 Some Vocabulary
@@ -279,7 +343,8 @@ but that data may not be representative of the data the model will apply to
 - We call this the **training error** and the **test error**
 - In inferential statistics we often seek to reduce **training error** and not 
 concern ourselves with **test error**
-- In applied modeling we focus on finding the optimal tradeoff between **variance error** and **bias error** 
+- In applied modeling we focus on finding the optimal tradeoff between **variance** and **bias** 
+in order to hopefully reduce **test error**
 
 A Simple Motivating Example
 =================================
@@ -422,9 +487,8 @@ qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
 Evaluating Model Fit
 ==================================================
 
-How do we know how well our models fit?
+How do we know how well our models fit? A **very brief** model comparison review:
 
-- A **very brief** model comparison review:
 - $\\R^2$ - ratio of explained variation to total variation (generally)
 - Nested model tests: 
   * F test and Likelihood ratio tests (restricted and unrestricted model)
@@ -489,15 +553,39 @@ can insulate against overfit
 - Paradigm shifts occur
 
 
+Bias, Variance, Training, and Test Data
+======================================
+
+<small>Figure from Hastie, Tibshirani and Friedman (2009). Springer-Verlag (Figure 7.1) </small>
+
+<img style="height:auto; width:auto; max-width:600px; max-height:700px;" src="img/ESLFig7.1.png" title="Variance and Bias" alt="ESL7.1" style="display: block; margin: auto;" />
+
+
+
 Measuring Fit Differently
 =============================
 
-- Classification measures like ROC
-- Mean Squared Error for the test data
-- Repeated folds, cross-validation, LOOCV
+- The more complex the model gets, the more it overfits the training data at the 
+cost of the test data!
+- Need to estimate the error on the test data set
+- Need to choose an error measure: prediction error, mean squared error, etc. 
+- Identify the method that is most appropriate: Repeated folds, cross-validation, LOOCV
 - All ways to deal with robustly choosing a model that might fit the training 
 data less optimally, but it likely to be a better fit on future data
 
+Splitting the Data
+============================
+
+- In cases where observations are cheap, 50% of the sample is for training, 25% 
+for validation, and 25% for final testing
+- When data is not cheap, a number of methods can be used to approximate the 
+test set error
+- We are familiar with in-sample error estimates such as AIC, BIC, etc.
+- K fold cross-validation splits the data into 5 groups, and uses each group 
+1 time as a validation set, fitting the model to the other 4 groups
+  *  "Overall, ﬁve- or tenfold cross-validation are recommended as a good compromise: see Breiman and Spector (1992)
+and Kohavi (1995)." Hastie et al p. 243
+- Bootstrap
 
 Confusion Matrix
 ======================
@@ -735,6 +823,7 @@ Credits
 Statistical Learning, with applications in R"  (Springer, 2013) with permission 
 from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani
 - Watson and Crick photo from: [http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg](http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg)
+- CPU power graph: [http://preshing.com/20120208/a-look-back-at-single-threaded-cpu-performance/](http://preshing.com/20120208/a-look-back-at-single-threaded-cpu-performance/)
 
 Further Resources
 ====================
@@ -743,4 +832,4 @@ Further Resources
 - The Black Swan: Second Edition: The Impact of the Highly Improbable (2nd ed. 2010). Nassim Taleb.  Random House.
 - An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. [Get the book](http://www-bcf.usc.edu/~gareth/ISL/index.html)
 - Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
-Robert Tibshirani, and Jerome Friedman. Springer
+Robert Tibshirani, and Jerome Friedman. Springer [Get the book](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
