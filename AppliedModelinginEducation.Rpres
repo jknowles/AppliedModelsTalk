@@ -164,7 +164,7 @@ Unparalleled Increase in Computation Leads to Different Solutions
 Outline
 =====================================================
 
-- Statistical Learning
+- The Two Modeling Cultures
 - Preparing Data
 - Assessing Model Fit
 - Applying Models Beyond the Journal Article
