@@ -127,11 +127,10 @@ Motivation
 ===================================================
 incremental: true
 
-- What does it mean to be data driven?
-- What can we learn from NLSY, ELS, ECLS?
-- What can we learn from administrative records?
-- How can we provide educators and decision makers with a sense of what **might** happen, 
-instead of what **may have** happened?
+- Of the two modeling cultures, we've only learned one
+- Computation increases are changing everything
+- Data is growing and many problems have different issues
+- Prediction is underused and undervalued, and this undermines inference
 
 Some Trends
 ======================================================
