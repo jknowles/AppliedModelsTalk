@@ -186,16 +186,6 @@ as much data as possible with as few variables as possible
 - Sometimes the goal is **inference** and other times it is **prediction**
 - In statistical learning we can think of **supervised** and **unsupervised** cases
 
-An Aside on Unsupervised Models
-=====================================
-
-<img src="AppliedModelinginEducation-figure/clusters.png" title="plot of chunk clusters" alt="plot of chunk clusters" style="display: block; margin: auto;" />
-
-
-- These are familiar techniques for dimension reduction like cluster analysis, factor 
-analysis, or principal components analysis
-- Can be useful for starting an analysis, looking for structure
-
 Statistical Modeling
 =======================================================
 
@@ -209,6 +199,39 @@ $Y$. In traditional linear modeling, $\hat{f}$ takes the form:
 $$ \hat{Y} = \alpha + \beta(X) + \epsilon $$
 
 However, there exist limitless alternative $\hat{f}$ which we can explore. Applied modeling techniques help us expand the $\hat{f}$ space we search within.
+
+
+The Data Modeling Culture
+=================================
+
+- Starts philosophically with the idea that we have written down a set of X that 
+describe Y with a known functional form that we are testing
+- Black box between x and y can be known because the data generating process 
+DGP is some functional combination of predictors, parameters, and noise
+- Model fit is based on goodness of fit and residual tests
+
+<img src="img/DataModel.png" title="Data Models" alt="FP" style="display: block; margin:0 auto;" />
+
+The Algorithmic Modeling Culture
+========================================
+
+- Black box is unknowable - we are not modeling nature but seeking to use similar 
+inputs to predict the outputs of the natural process
+- Model fit measured by prediction accuracy
+
+<img src="img/AlgoModel.png" title="Algorithmic Models" alt="FP" style="display: block; margin:0 auto;" />
+
+Tukey on Models
+====================
+
+> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
+
+Gelman on Being a Modeling Pluralist
+==========================================
+
+> Schools of statistical thoughts are sometimes jokingly likened to religions. This analogy is not perfect—unlike religions, statistical methods have no supernatural content and make essentially no demands on our personal lives. Looking at the comparison from the other direction, it is possible to be agnostic, atheistic, or simply live one’s life without religion, but it is not really possible to do statistics without some philosophy. ~ Andrew Gelman
+
+
 
 Functional forms
 ==============================
@@ -623,3 +646,15 @@ Further Resources
 - An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. [Get the book](http://www-bcf.usc.edu/~gareth/ISL/index.html)
 - Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
 Robert Tibshirani, and Jerome Friedman. Springer [Get the book](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
+
+An Aside on Unsupervised Models
+=====================================
+
+<img src="AppliedModelinginEducation-figure/clusters.png" title="plot of chunk clusters" alt="plot of chunk clusters" style="display: block; margin: auto;" />
+
+
+- These are familiar techniques for dimension reduction like cluster analysis, factor 
+analysis, or principal components analysis
+- Can be useful for starting an analysis, looking for structure
+
+
