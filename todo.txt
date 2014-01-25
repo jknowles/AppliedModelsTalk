@@ -15,6 +15,30 @@ NEW OUTLINE for Social Scientists
 - Model updating and model support (it doesn't end with a table of results)
 - Presentation and communication
 
+##
+Erratta
+load("../DEWS_Paper/data/EWSmodelFitStatsFINAL.rda")
+
+qplot(1-specificity, sensitivity,data=ews, shape=flag, size=I(4), 
+     color=flag, geom='point') + scale_shape("EWI Type") +
+  scale_color_manual("EWI Type",values=mycol) +
+  geom_abline(intercept=0, slope=1, linetype=2) + 
+  coord_cartesian(xlim=c(0,1), ylim=c(0,1)) + theme_dpi(base_size=14) +
+  labs(x="False Alarm Proportion", y="True Positive Proportion",
+       title = "Comparing EWIs in Literature, GLMs, \n and Machine Learning Algorithms on Training Data ROC") + 
+  annotate(geom="text", x=.75, y=.78, angle=45, label="Random Guess") +
+   theme(legend.position = c(0.75, 0.25), 
+        legend.background = element_rect(fill=NULL, color="black"), 
+        legend.key.width = unit(2.5, "cm")) +
+  geom_line(data=newdat[newdat$type == "train",], 
+              aes(x=1-spec, y=sens, linetype=grp, color= NULL, 
+                          group=grp, shape=NULL, size=NULL),
+              size=I(1.1), color=I('gray10')) +
+  scale_linetype_manual("Model", values=mylines) + 
+  geom_line(data=ModelFits[ModelFits$grp==2 & ModelFits$auc > 0.5,], 
+             aes(x=1-spec, y=sens, group=method,  
+                 linetype=NULL, color=NULL, shape=NULL, size=NULL), 
+            alpha=I(0.2), size=I(1.05), linetype=1)
 
 
 
