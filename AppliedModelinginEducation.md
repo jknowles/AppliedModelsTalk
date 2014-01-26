@@ -127,7 +127,7 @@ Motivation
 ===================================================
 incremental: true
 
-- Of the two modeling cultures, we've only learned one
+- Of the two modeling cultures, we've tend to focus overwhelmingly on one
 - Computation increases are changing everything
 - Data is growing and many problems have different issues
 - Prediction is underused and undervalued, and this undermines inference
@@ -151,6 +151,8 @@ Computers
 
 - We will be working in an era unlike all previous generations of statisticians -- 
 computers are going to continually get better and better at solving problems
+- The high cost of computation constrains our thinking and our methods now, just 
+like it did for the last two hundred years
 
 Unparalleled Increase in Computation Leads to Different Solutions
 ======================================================================
@@ -158,15 +160,16 @@ Unparalleled Increase in Computation Leads to Different Solutions
 
 <img src="img/float-point-perf.png" title="Single Thread FP" alt="FP" style="display: block; margin:0 auto;" />
 
-<small>Now we can bootstrap, use MCMC for Bayesian methods, and do multi-model inference</small>
+<small>Now we can bootstrap, use MCMC for Bayesian methods, and do multi-model inference 
+in a fraction of the time</small>
 
 Outline
 =====================================================
 
-- The Two Modeling Cultures
-- Preparing Data
-- Assessing Model Fit
-- Applying Models Beyond the Journal Article
+- What is a modeling culture and how can there be two?
+- Why should we pay more attention to model fit?
+- What changes when we apply a model beyond the journal article? 
+- Rules of thumb, practical advice, and communication
 
 
 What is a model?
@@ -189,7 +192,7 @@ as much data as possible with as few variables as possible
 Statistical Modeling
 =======================================================
 
-It is useful to remember that in statistical modeling, in the **supervised** case, we are looking at the following relationship:
+It is useful to remember that in all statistical modeling, in the **supervised** case, we are looking at the following relationship:
 
 $$ \hat{Y} = \hat{f}(X) $$
 
@@ -221,15 +224,11 @@ inputs to predict the outputs of the natural process
 
 <img src="img/AlgoModel.png" title="Algorithmic Models" alt="FP" style="display: block; margin:0 auto;" />
 
-Tukey on Models
-====================
-
-> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
 
 Gelman on Being a Modeling Pluralist
 ==========================================
 
-> Schools of statistical thoughts are sometimes jokingly likened to religions. This analogy is not perfect—unlike religions, statistical methods have no supernatural content and make essentially no demands on our personal lives. Looking at the comparison from the other direction, it is possible to be agnostic, atheistic, or simply live one’s life without religion, but it is not really possible to do statistics without some philosophy. ~ Andrew Gelman
+> Schools of statistical thoughts are sometimes jokingly likened to religions. This analogy is not perfect�unlike religions, statistical methods have no supernatural content and make essentially no demands on our personal lives. Looking at the comparison from the other direction, it is possible to be agnostic, atheistic, or simply live one�s life without religion, but it is not really possible to do statistics without some philosophy. ~ Andrew Gelman
 
 
 
@@ -283,7 +282,7 @@ causal claims
 Why the Difference?
 ========================================================
 
-Applied Models:
+Algorithmic Models:
 
 - Provide information to users about what to expect given certain data
 - Serve many goals including prediction of non-observed 
@@ -292,7 +291,7 @@ outcomes, summarizing large datasets, measuring uncertainty
 
 ***
 
-Inferential Models: 
+Data Models: 
 
 - Focused on understanding patterns in the current data
 - Seek to understand how current data extrapolates to a population
@@ -331,7 +330,15 @@ concern ourselves with **test error**
 - In applied modeling we focus on finding the optimal tradeoff between **variance** and **bias** 
 in order to hopefully reduce **test error**
 
+Tukey on Models
+====================
+
+> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
+
+
 A Simple Motivating Example
+=================================
+When Could this Matter: Stocks?
 =================================
 
 <img src="AppliedModelinginEducation-figure/unnamed-chunk-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
@@ -354,6 +361,7 @@ Forecasts Are Tricky
 <img src="AppliedModelinginEducation-figure/unnamed-chunk-4.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
 
 
+
 Evaluating Model Fit
 ==================================================
 
@@ -367,6 +375,7 @@ How do we know how well our models fit? A **very brief** model comparison review
 - These don't give us a sense of how the model will do on **new** data, and they 
 are not easy to explain!
 
+
 Predicting New Data
 ================================================
 
@@ -375,27 +384,27 @@ Predicting New Data
 <img src="AppliedModelinginEducation-figure/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
 
 
+
 The Bias - Variance Tradeoff
 =============================================
 
 - The purple and blue models are identical except each was "trained" on different 
-data, the difference between them is variance
-- Both methods have the same bias, but the linear model has a different bias - 
-a feature of the flexibility in the model
-- Less flexible models will have more bias, but are less variable in response to 
-the data they are trained on
+data, the difference between their predictions is **variance**
+- Both have the less bias on the data they are trained, but the linear model 
+  has a different bias - a feature of the flexibility in the model
+- Less flexible models like linear models will have more bias, but are less 
+variable in response to the data they are trained on
 
 
 
 Model fit = Fit to signal + fit to noise
 ============================================
 
-- Training data can lead to model overfit (the blue line)
+- Training data (sample) can lead to model overfit (the blue line)
 - Training data can lead to bias in future predictions (the purple line)
 - We need both methods of $f$ and methods of evaluating models that 
 can insulate against overfit
 - This means different measures of model fit to choose among competing models
-- Understanding the data generation process helps inform how difficult extrapolation will be
 - Time changes everything and the process/logic of updating models is important
 - Non-linear behaviors can be right around the corner
 - Paradigm shifts occur
@@ -406,8 +415,7 @@ Bias, Variance, Training, and Test Data
 
 <small>Figure from Hastie, Tibshirani and Friedman (2009). Springer-Verlag (Figure 7.1) </small>
 
-<img style="height:auto; width:auto; max-width:600px; max-height:700px;" src="img/ESLFig7.1.png" title="Variance and Bias" alt="ESL7.1" style="display: block; margin: auto;" />
-
+<img src="img/ESLFig7.1.png" title="Variance and Bias" alt="ESL7.1" style="display: block; margin:0 auto; height:auto; width:auto; max-width:600px; max-height:700px"/>
 
 
 Measuring Fit Differently
@@ -431,7 +439,7 @@ test set error
 - We are familiar with in-sample error estimates such as AIC, BIC, etc.
 - K fold cross-validation splits the data into 5 groups, and uses each group 
 1 time as a validation set, fitting the model to the other 4 groups
-  *  "Overall, ﬁve- or tenfold cross-validation are recommended as a good compromise: see Breiman and Spector (1992)
+  *  "Overall, <U+FB01>ve- or tenfold cross-validation are recommended as a good compromise: see Breiman and Spector (1992)
 and Kohavi (1995)." Hastie et al p. 243
 - Bootstrap
 
@@ -597,6 +605,11 @@ False alarm (1-specificity) = $\frac{b}{(b+d)}$
 or as the balancing metric (false alarm) that we seek to hold constant while 
 increasing our sensitivity. 
 
+
+What Changes When a Model is Actually Used?
+==================================================
+
+
 Outline
 ===================
 
@@ -606,7 +619,7 @@ Outline
 4. Setting thresholds
 
 
-Model Fit
+Model Fit: Predicting Dropouts
 ==================================================
 
 <img src="AppliedModelinginEducation-figure/unnamed-chunk-6.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
@@ -614,47 +627,29 @@ Model Fit
 
 <small>Adapted from Bowers and Sprott 2013</small>
 
-
-What Changes When a Model is Actually Used?
-==================================================
-
-
-Preparing Data
+Problems
 =================================================
 
-1. Recoding variables
-2. Centering and scaling
+- Most EWIs have a low true positive identification rate
+- EWI literature does not report performance on a test dataset of future students
+- High performing EWIs have immense data requirements
+- Alarming false positive rates and no ability to tune these rates due to 
+single indicator
+- But... we have a strong baseline universe to compare to
 
-
-Missing Data Issues
+Results
 ==================================================
 
 
-Credits
-====================
-- Some of the figures in this presentation are taken from "An Introduction to 
-Statistical Learning, with applications in R"  (Springer, 2013) with permission 
-from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani
-- Watson and Crick photo from: [http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg](http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg)
-- CPU power graph: [http://preshing.com/20120208/a-look-back-at-single-threaded-cpu-performance/](http://preshing.com/20120208/a-look-back-at-single-threaded-cpu-performance/)
-
-Further Resources
-====================
-
-- The Signal and the Noise: Why So Many Predictions Fail — but Some Don't. Nate Silver. (2012). Penguin.
-- The Black Swan: Second Edition: The Impact of the Highly Improbable (2nd ed. 2010). Nassim Taleb.  Random House.
-- An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. [Get the book](http://www-bcf.usc.edu/~gareth/ISL/index.html)
-- Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
-Robert Tibshirani, and Jerome Friedman. Springer [Get the book](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
-
-An Aside on Unsupervised Models
-=====================================
-
-<img src="AppliedModelinginEducation-figure/clusters.png" title="plot of chunk clusters" alt="plot of chunk clusters" style="display: block; margin: auto;" />
 
 
-- These are familiar techniques for dimension reduction like cluster analysis, factor 
-analysis, or principal components analysis
-- Can be useful for starting an analysis, looking for structure
 
 
+
+
+
+
+```
+Error in subset(ModelFits, select = c("method", "grp", "auc", "elapsedTime")) : 
+  object 'ModelFits' not found
+```
