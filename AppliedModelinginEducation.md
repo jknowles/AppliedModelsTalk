@@ -131,6 +131,110 @@ incremental: true
 - Computation increases are changing everything
 - Data is growing and many problems have different issues
 - Prediction is underused and undervalued, and this undermines inference
+- In real world applications, prediction is a powerful tool that will be more 
+and more relevant to our work each year
+
+The Wisconsin Dropout Early Warning System
+===============================================
+type: section
+
+> "To help keep all kids on a path to graduation, we just delivered - with no new funding - a new statewide Dropout Early Warning System, called DEWS, to all districts. DEWS makes it possible to identify kids who may be at risk, and allows districts to intervene as early as middle school." ~ Tony Evers
+
+DEWS
+========================================================
+
+- The Dropout Early Warning System for the Wisconsin Department of Public Instruction
+- Leverages DPI's administrative records to provide predictions on student high school 
+completion while students are in middle grades
+- Communicates the results to school staff in all Wisconsin public schools serving 
+students in the middle grades
+- Comes with an interpretive guide and strategies for success [available online](http://wise.dpi.wi.gov/wise_dashdews)
+- Released in September of 2013, with bi-annual updates in April and August
+- Serves as a good example of where social science and applied modeling intersect
+
+Why DEWS?
+========================================================
+
+- Every child a graduate, college and career ready -- Agenda 2017, DPI's strategic 
+plan
+- DEWS focuses on providing schools and districts an **early** notice of 
+whether or not a student is likely to complete high school on time
+- DEWS uses data on historical cohorts of students in Wisconsin to link middle 
+grade student outcome data with the long-term outcome of on time graduation
+- DEWS provides a **relatively accurate** assessment of the likelihood of 
+on time graduation for individual students across the state
+
+
+Graduation and Droput By the Numbers
+============================================
+
+**9,092 students in 2010-11 did not graduate with their cohort.**
+
+| Group | Expected | Grads  |  Rate  | Difference | 
+| --------- | ------ | -----| -------|  --------: |
+| White     | 54,468 | 49,783  | 91.4% | -    |
+| American Indian | 1,027 | 737| 71.7% | **19.7** |
+| Asian     |  2,517 | 2,225   | 88.4% | **3**    |
+| Black     |  6,889 | 4,395   | 63.8% | **27.6** |
+| Hispanic  |  4,751 | 3,420   | 72.0% | **19.4** |
+| Total     | 69,652 | 60,560  | 86.9% | -    |
+
+
+What is DEWS? 
+=========================================================
+incremental: true
+
+DEWS is an applied statistical model that combines several major features:
+
+- Data import, filtering, and cleaning for analysis from the state longitudinal 
+database
+- A machine learning algorithm to search among candidate models for the best 
+predictive model
+- A case scoring routine to apply predictive models to current students
+- An exporting feature to push the predictions into the state business intelligence 
+tool, WISEdash for Districts
+- A display layer available to schools and districts securely for exploring the results
+- In reality, it resembles **software** as much as a statistical analysis
+
+
+Under the Hood of DEWS
+=========================================================
+incremental: true
+
+DEWS consists of several sub-routines that can be thought of as states of building 
+a statistical model
+
+1. Data acquisition
+2. Data cleaning, normalizing, and standardizing
+3. Model feature and model algorithm search
+4. Model testing
+5. Model selection
+6. New case scoring
+7. Prediction export for reporting
+
+All modules are built in the free and open source statistical computing language, [R](http://www.r-project.org/). 
+
+DEWS by the Numbers
+=====================================================
+
+<small>
+- Consists of over **3,500** lines of code ([working on open sourcing](www.github.com/jknowles))
+- Analyzes over **250,000** historical records of student graduation
+- Provides predictions on over **180,000** students in the state
+- Produces predictions on students in over **1,000** schools
+- Selects from over **50** candidate statistical models **per grade**
+- Hundreds of users have accessed thousands of individual student reports across 
+nearly every Wisconsin school district
+- Being explored in Michigan, New Jersey, and school districts in Kansas, Montana, 
+and Minnesota
+
+</small>
+
+DEWS as an Applied Model
+====================================
+type: section
+
+> This inconsistency [in the literature] has created a hodgepodge of claims as to the accuracy of the tested dropout flags across the literature that is difficult to evaluate in an effort to help schools, districts, researchers and policymakers find and employ accurate indicators of student dropout risk. ~ Bowers, Sprott, and Taff 2013
 
 Some Trends
 ======================================================
@@ -139,29 +243,61 @@ Some Trends
 - Schools are increasingly being asked to provide more services. 
 - Policy makers increasingly asked to justify their policies with projections. 
 - Timelines are speeding up!
-- People are talking about things like "data science" and "big data" (even NSF)
+- People are talking about things like "data science" and "big data" [even NSF](http://www.nsf.gov/cise/news/bigdata.jsp).
 - Academics have to explain their work to a growing list of stakeholders. 
 
 Computers
 =====================================================
 
-- Most of your statistics books were written by people who used this:
+- Most of your statistics books were written by people who used these:
 
-<img style="height:auto; width:auto; max-width:400px; max-height:300px; display: block; margin:0 auto;" src="img/mainframes.jpg" title="Mainframe" alt="FP"/>
+<img style="height:auto; width:auto; max-width:450px; max-height:315px; display: block; margin:0 auto;" src="img/mainframes.jpg" title="Mainframe" alt="FP"/>
 
-- We will be working in an era unlike all previous generations of statisticians -- 
-computers are going to continually get better and better at solving problems
 - The high cost of computation constrains our thinking and our methods now, just 
-like it did for the last two hundred years
+like it has for the last two hundred years
 
-Unparalleled Increase in Computation Leads to Different Solutions
+Increased Computational Power
 ======================================================================
-
 
 <img src="img/float-point-perf.png" title="Single Thread FP" alt="FP" style="display: block; margin:0 auto;" />
 
-<small>Now we can bootstrap, use MCMC for Bayesian methods, and do multi-model inference 
-in a fraction of the time</small>
+<small>We are working in an era where computers are going to continually get better 
+and better at solving problems, even within our own careers</small>
+
+Brian Ripley on Computation
+===================================
+<small>
+One sense of 'computer-intensive' statistics is just statistical methodology
+which makes use of a large amount of computer time - examples include
+the bootstrap, smoothing, image analysis and many uses of the 'EM algorithm'.
+
+The term is usually used for methods which go beyond the minimum of
+calculations needed for an illuminating analysis.
+- Working with (much) larger datasets.
+- Using more realistic models and better ways to fit models.
+- Exploring a (much) larger class of models.
+- Attempting a more realistic analysis of existing simple models.
+- Better visualization of data or fitted models or their combination.
+</small>
+[More online](http://www.stats.ox.ac.uk/~ripley/Cox80.pdf)
+
+What Can We Do Today?
+=========================
+
+- Complex multivariate regressions
+- Bootstrap replication for all sorts of estimates
+- Model comparisons among multiple models
+- MCMC for Bayesian estimation of complex models
+- Multi-model inference and model averaging
+- **The high speed of computational innovation is going to require us to reinvent 
+our thinking much more frequently**
+
+Being a Modeling Pluralist
+=============================================
+type: section
+
+> Schools of statistical thoughts are sometimes jokingly likened to religions. This analogy is not perfect - unlike religions, statistical methods have no supernatural content and make essentially no demands on our personal lives. Looking at the comparison from the other direction, it is possible to be agnostic, atheistic, or simply live one's life without religion, but it is not really possible to do statistics without some philosophy. ~ Andrew Gelman
+
 
 Outline
 =====================================================
@@ -224,11 +360,18 @@ inputs to predict the outputs of the natural process
 
 <img src="img/AlgoModel.png" title="Algorithmic Models" alt="FP" style="display: block; margin:0 auto;" />
 
+Buyer Beware
+===========================================
+type:section
 
-Gelman on Being a Modeling Pluralist
-==========================================
+> A big computer, a complex algorithm and a long time does not equal science. ~ Robert Gentleman
 
-> Schools of statistical thoughts are sometimes jokingly likened to religions. This analogy is not perfectóunlike religions, statistical methods have no supernatural content and make essentially no demands on our personal lives. Looking at the comparison from the other direction, it is possible to be agnostic, atheistic, or simply live oneís life without religion, but it is not really possible to do statistics without some philosophy. ~ Andrew Gelman
+
+On Models
+=========================================
+type: section
+
+> Statisticians, like artists, have the bad habit of falling in love with their models. ~ George Box
 
 
 
@@ -298,6 +441,13 @@ Data Models:
 - Estimates population parameters from sample data about relationships between 
 inputs and outputs
 
+On Nails, Hammers, and Models
+===================================================
+type: section
+
+> The best available solution to a data problem might be a data model; then again
+it might be an algorithmic model. The data and the problem guide the solution. To 
+solve a wider range of data problems, a larger set of tools is needed. ~ Leo Breiman
 
 Some Vocabulary
 ========================================================
@@ -310,8 +460,8 @@ Some Vocabulary
 
 ***
 
-- Data the model is fit to
-- Data the model is applied to, but not fit to, to evaluate model fit
+- Data the model is fit to (analytical sample)
+- Data the model predicts, to evaluate model fit
 - Refers to the amount of error due to simplifying a complex process
 - The amount the $f$ would change if fit to a different training set of data
 
@@ -328,17 +478,10 @@ but that data may not be representative of the data the model will apply to
 - In inferential statistics we often seek to reduce **training error** and not 
 concern ourselves with **test error**
 - In applied modeling we focus on finding the optimal tradeoff between **variance** and **bias** 
-in order to hopefully reduce **test error**
-
-Tukey on Models
-====================
-
-> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
+in order to reduce **test error**
 
 
 A Simple Motivating Example
-=================================
-When Could this Matter: Stocks?
 =================================
 
 <img src="AppliedModelinginEducation-figure/unnamed-chunk-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
@@ -439,7 +582,7 @@ test set error
 - We are familiar with in-sample error estimates such as AIC, BIC, etc.
 - K fold cross-validation splits the data into 5 groups, and uses each group 
 1 time as a validation set, fitting the model to the other 4 groups
-  *  "Overall, <U+FB01>ve- or tenfold cross-validation are recommended as a good compromise: see Breiman and Spector (1992)
+  *  "Overall, Ô¨Åve- or tenfold cross-validation are recommended as a good compromise: see Breiman and Spector (1992)
 and Kohavi (1995)." Hastie et al p. 243
 - Bootstrap
 
@@ -606,6 +749,7 @@ or as the balancing metric (false alarm) that we seek to hold constant while
 increasing our sensitivity. 
 
 
+
 What Changes When a Model is Actually Used?
 ==================================================
 
@@ -640,16 +784,78 @@ single indicator
 Results
 ==================================================
 
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+
+
+Tukey on Models
+====================
+
+> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
+
+Building and Testing Multiple Models
+================================================
+
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
 
 
 
+Tradeoffs
+========================
+
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
 
 
 
+Ensembles and the Myth of the 1 True Model
+====================================================
+
+- But even these models can exhibit bias in the test data
+- We are also assuming that one model is enough and is correct
+- Ensembles, multi-model inference, these are techniques to allow us to 
+borrow strengths from multiple models and hedge against error
+- Easy to implement with computation
+
+Preparing Data
+=================================================
+
+1. Recoding variables
+2. Centering and scaling
 
 
+Missing Data Issues
+==================================================
 
-```
-Error in subset(ModelFits, select = c("method", "grp", "auc", "elapsedTime")) : 
-  object 'ModelFits' not found
-```
+
+Credits
+====================
+- Some of the figures in this presentation are taken from "An Introduction to 
+Statistical Learning, with applications in R"  (Springer, 2013) with permission 
+from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani
+- Watson and Crick photo from: [http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg](http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg)
+- CPU power graph: [http://preshing.com/20120208/a-look-back-at-single-threaded-cpu-performance/](http://preshing.com/20120208/a-look-back-at-single-threaded-cpu-performance/)
+
+Further Resources
+====================
+
+<small>
+- The Signal and the Noise: Why So Many Predictions Fail ‚Äî but Some Don't. Nate Silver. (2012). Penguin.
+- The Black Swan: Second Edition: The Impact of the Highly Improbable (2nd ed. 2010). Nassim Taleb.  Random House.
+- An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. [Download the book](http://www-bcf.usc.edu/~gareth/ISL/index.html)
+- Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
+Robert Tibshirani, and Jerome Friedman. Springer [Download the book](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
+- Model Selection and Model Averaging (2008). Gerda Claeskens and Nils Lid Hjort. [Get the book](http://www.amazon.com/Selection-Averaging-Statistical-Probabilistic-Mathematics/dp/0521852250)
+- Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach 
+(2004). Kenneth P. Burnham and David R. Anderson [Get the book](http://www.amazon.com/Model-Selection-Multimodel-Inference-Information-Theoretic/dp/1441929738/ref=pd_sim_b_1)
+
+</small>
+An Aside on Unsupervised Models
+=====================================
+
+<img src="AppliedModelinginEducation-figure/clusters.png" title="plot of chunk clusters" alt="plot of chunk clusters" style="display: block; margin: auto;" />
+
+
+- These are familiar techniques for dimension reduction like cluster analysis, factor 
+analysis, or principal components analysis
+- Can be useful for starting an analysis, looking for structure
+
+

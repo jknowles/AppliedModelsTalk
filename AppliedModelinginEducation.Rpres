@@ -131,6 +131,110 @@ incremental: true
 - Computation increases are changing everything
 - Data is growing and many problems have different issues
 - Prediction is underused and undervalued, and this undermines inference
+- In real world applications, prediction is a powerful tool that will be more 
+and more relevant to our work each year
+
+The Wisconsin Dropout Early Warning System
+===============================================
+type: section
+
+> "To help keep all kids on a path to graduation, we just delivered - with no new funding - a new statewide Dropout Early Warning System, called DEWS, to all districts. DEWS makes it possible to identify kids who may be at risk, and allows districts to intervene as early as middle school." ~ Tony Evers
+
+DEWS
+========================================================
+
+- The Dropout Early Warning System for the Wisconsin Department of Public Instruction
+- Leverages DPI's administrative records to provide predictions on student high school 
+completion while students are in middle grades
+- Communicates the results to school staff in all Wisconsin public schools serving 
+students in the middle grades
+- Comes with an interpretive guide and strategies for success [available online](http://wise.dpi.wi.gov/wise_dashdews)
+- Released in September of 2013, with bi-annual updates in April and August
+- Serves as a good example of where social science and applied modeling intersect
+
+Why DEWS?
+========================================================
+
+- Every child a graduate, college and career ready -- Agenda 2017, DPI's strategic 
+plan
+- DEWS focuses on providing schools and districts an **early** notice of 
+whether or not a student is likely to complete high school on time
+- DEWS uses data on historical cohorts of students in Wisconsin to link middle 
+grade student outcome data with the long-term outcome of on time graduation
+- DEWS provides a **relatively accurate** assessment of the likelihood of 
+on time graduation for individual students across the state
+
+
+Graduation and Droput By the Numbers
+============================================
+
+**9,092 students in 2010-11 did not graduate with their cohort.**
+
+| Group | Expected | Grads  |  Rate  | Difference | 
+| --------- | ------ | -----| -------|  --------: |
+| White     | 54,468 | 49,783  | 91.4% | -    |
+| American Indian | 1,027 | 737| 71.7% | **19.7** |
+| Asian     |  2,517 | 2,225   | 88.4% | **3**    |
+| Black     |  6,889 | 4,395   | 63.8% | **27.6** |
+| Hispanic  |  4,751 | 3,420   | 72.0% | **19.4** |
+| Total     | 69,652 | 60,560  | 86.9% | -    |
+
+
+What is DEWS? 
+=========================================================
+incremental: true
+
+DEWS is an applied statistical model that combines several major features:
+
+- Data import, filtering, and cleaning for analysis from the state longitudinal 
+database
+- A machine learning algorithm to search among candidate models for the best 
+predictive model
+- A case scoring routine to apply predictive models to current students
+- An exporting feature to push the predictions into the state business intelligence 
+tool, WISEdash for Districts
+- A display layer available to schools and districts securely for exploring the results
+- In reality, it resembles **software** as much as a statistical analysis
+
+
+Under the Hood of DEWS
+=========================================================
+incremental: true
+
+DEWS consists of several sub-routines that can be thought of as states of building 
+a statistical model
+
+1. Data acquisition
+2. Data cleaning, normalizing, and standardizing
+3. Model feature and model algorithm search
+4. Model testing
+5. Model selection
+6. New case scoring
+7. Prediction export for reporting
+
+All modules are built in the free and open source statistical computing language, [R](http://www.r-project.org/). 
+
+DEWS by the Numbers
+=====================================================
+
+<small>
+- Consists of over **3,500** lines of code ([working on open sourcing](www.github.com/jknowles))
+- Analyzes over **250,000** historical records of student graduation
+- Provides predictions on over **180,000** students in the state
+- Produces predictions on students in over **1,000** schools
+- Selects from over **50** candidate statistical models **per grade**
+- Hundreds of users have accessed thousands of individual student reports across 
+nearly every Wisconsin school district
+- Being explored in Michigan, New Jersey, and school districts in Kansas, Montana, 
+and Minnesota
+
+</small>
+
+DEWS as an Applied Model
+====================================
+type: section
+
+> This inconsistency [in the literature] has created a hodgepodge of claims as to the accuracy of the tested dropout flags across the literature that is difficult to evaluate in an effort to help schools, districts, researchers and policymakers find and employ accurate indicators of student dropout risk. ~ Bowers, Sprott, and Taff 2013
 
 Some Trends
 ======================================================
@@ -139,29 +243,61 @@ Some Trends
 - Schools are increasingly being asked to provide more services. 
 - Policy makers increasingly asked to justify their policies with projections. 
 - Timelines are speeding up!
-- People are talking about things like "data science" and "big data" (even NSF)
+- People are talking about things like "data science" and "big data" [even NSF](http://www.nsf.gov/cise/news/bigdata.jsp).
 - Academics have to explain their work to a growing list of stakeholders. 
 
 Computers
 =====================================================
 
-- Most of your statistics books were written by people who used this:
+- Most of your statistics books were written by people who used these:
 
-<img style="height:auto; width:auto; max-width:400px; max-height:300px; display: block; margin:0 auto;" src="img/mainframes.jpg" title="Mainframe" alt="FP"/>
+<img style="height:auto; width:auto; max-width:450px; max-height:315px; display: block; margin:0 auto;" src="img/mainframes.jpg" title="Mainframe" alt="FP"/>
 
-- We will be working in an era unlike all previous generations of statisticians -- 
-computers are going to continually get better and better at solving problems
 - The high cost of computation constrains our thinking and our methods now, just 
-like it did for the last two hundred years
+like it has for the last two hundred years
 
-Unparalleled Increase in Computation Leads to Different Solutions
+Increased Computational Power
 ======================================================================
-
 
 <img src="img/float-point-perf.png" title="Single Thread FP" alt="FP" style="display: block; margin:0 auto;" />
 
-<small>Now we can bootstrap, use MCMC for Bayesian methods, and do multi-model inference 
-in a fraction of the time</small>
+<small>We are working in an era where computers are going to continually get better 
+and better at solving problems, even within our own careers</small>
+
+Brian Ripley on Computation
+===================================
+<small>
+One sense of 'computer-intensive' statistics is just statistical methodology
+which makes use of a large amount of computer time - examples include
+the bootstrap, smoothing, image analysis and many uses of the 'EM algorithm'.
+
+The term is usually used for methods which go beyond the minimum of
+calculations needed for an illuminating analysis.
+- Working with (much) larger datasets.
+- Using more realistic models and better ways to fit models.
+- Exploring a (much) larger class of models.
+- Attempting a more realistic analysis of existing simple models.
+- Better visualization of data or fitted models or their combination.
+</small>
+[More online](http://www.stats.ox.ac.uk/~ripley/Cox80.pdf)
+
+What Can We Do Today?
+=========================
+
+- Complex multivariate regressions
+- Bootstrap replication for all sorts of estimates
+- Model comparisons among multiple models
+- MCMC for Bayesian estimation of complex models
+- Multi-model inference and model averaging
+- **The high speed of computational innovation is going to require us to reinvent 
+our thinking much more frequently**
+
+Being a Modeling Pluralist
+=============================================
+type: section
+
+> Schools of statistical thoughts are sometimes jokingly likened to religions. This analogy is not perfect - unlike religions, statistical methods have no supernatural content and make essentially no demands on our personal lives. Looking at the comparison from the other direction, it is possible to be agnostic, atheistic, or simply live one's life without religion, but it is not really possible to do statistics without some philosophy. ~ Andrew Gelman
+
 
 Outline
 =====================================================
@@ -224,11 +360,18 @@ inputs to predict the outputs of the natural process
 
 <img src="img/AlgoModel.png" title="Algorithmic Models" alt="FP" style="display: block; margin:0 auto;" />
 
+Buyer Beware
+===========================================
+type:section
 
-Gelman on Being a Modeling Pluralist
-==========================================
+> A big computer, a complex algorithm and a long time does not equal science. ~ Robert Gentleman
 
-> Schools of statistical thoughts are sometimes jokingly likened to religions. This analogy is not perfect—unlike religions, statistical methods have no supernatural content and make essentially no demands on our personal lives. Looking at the comparison from the other direction, it is possible to be agnostic, atheistic, or simply live one’s life without religion, but it is not really possible to do statistics without some philosophy. ~ Andrew Gelman
+
+On Models
+=========================================
+type: section
+
+> Statisticians, like artists, have the bad habit of falling in love with their models. ~ George Box
 
 
 
@@ -251,7 +394,7 @@ labs <- c("Lasso", "Subset Selection", "Least Squares",
 qplot(x, y, geom='text', label=labs) + theme_classic() + 
   scale_x_continuous("Flexibility", limits=c(min(x) - 0.5, max(x) + 0.5)) +
   scale_y_continuous("Interpretability", limits=c(min(y) - 0.5, max(y) + 0.5)) +
-  labs(title="Functional Forms and Tradeoffs") + 
+  labs(title="Functional Forms and Tradeoffs") + theme_dpi(base_size=18) +
   theme(axis.text=element_blank(), axis.ticks=element_blank())
 ```
 
@@ -315,6 +458,13 @@ Data Models:
 - Estimates population parameters from sample data about relationships between 
 inputs and outputs
 
+On Nails, Hammers, and Models
+===================================================
+type: section
+
+> The best available solution to a data problem might be a data model; then again
+it might be an algorithmic model. The data and the problem guide the solution. To 
+solve a wider range of data problems, a larger set of tools is needed. ~ Leo Breiman
 
 Some Vocabulary
 ========================================================
@@ -327,8 +477,8 @@ Some Vocabulary
 
 ***
 
-- Data the model is fit to
-- Data the model is applied to, but not fit to, to evaluate model fit
+- Data the model is fit to (analytical sample)
+- Data the model predicts, to evaluate model fit
 - Refers to the amount of error due to simplifying a complex process
 - The amount the $f$ would change if fit to a different training set of data
 
@@ -345,17 +495,10 @@ but that data may not be representative of the data the model will apply to
 - In inferential statistics we often seek to reduce **training error** and not 
 concern ourselves with **test error**
 - In applied modeling we focus on finding the optimal tradeoff between **variance** and **bias** 
-in order to hopefully reduce **test error**
-
-Tukey on Models
-====================
-
-> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
+in order to reduce **test error**
 
 
 A Simple Motivating Example
-=================================
-When Could this Matter: Stocks?
 =================================
 
 ```{r, echo=FALSE, results='hide', fig.align='center', fig.width=9}
@@ -432,7 +575,8 @@ qplot(time, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
   theme_dpi()+
   theme(axis.text.x=element_blank(), axis.ticks=element_blank(), 
         panel.grid.major.x = element_blank(), 
-        panel.grid.minor.x = element_blank()) 
+        panel.grid.minor.x = element_blank()) + 
+  labs(title = "Apple Stock from 2007-2014")
 
 ```
 
@@ -457,7 +601,8 @@ qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
         panel.grid.major.x = element_blank(), 
         panel.grid.minor.x = element_blank()) +
   annotate("rect", xmin=50, xmax=300, ymin=-Inf, ymax=200, fill="blue", 
-           alpha=0.25) 
+           alpha=0.25) + 
+  labs(title = "Apple Stock from 2007-2014")
 
 ```
 
@@ -481,7 +626,8 @@ qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
         panel.grid.major.x = element_blank(), 
         panel.grid.minor.x = element_blank()) +
     annotate("rect", xmin=300, xmax=500, ymin=-Inf, ymax=300, 
-             fill="purple", alpha=0.25) 
+             fill="purple", alpha=0.25) + 
+  labs(title = "Apple Stock from 2007-2014")
 
 
 ```
@@ -524,7 +670,8 @@ qplot(time2, AAPL.Adjusted, data = plotdf, geom='line', group=1) +
   annotate("rect", xmin=50, xmax=300, ymin=-Inf, ymax=300, fill="blue", 
            alpha=0.25) +
     annotate("rect", xmin=300, xmax=500, ymin=-Inf, ymax=300, 
-             fill="purple", alpha=0.25) 
+             fill="purple", alpha=0.25) + 
+  labs(title = "Apple Stock from 2007-2014")
 
 
 ```
@@ -751,6 +898,7 @@ or as the balancing metric (false alarm) that we seek to hold constant while
 increasing our sensitivity. 
 
 
+
 What Changes When a Model is Actually Used?
 ==================================================
 
@@ -821,7 +969,7 @@ Results
 ==================================================
 
 ```{r echo=FALSE, fig.width=12, fig.height=8, fig.align='center'}
-
+load("data/EWSmodelFitStatsFINAL.rda")
 table1 <- subset(ModelFits, select=c("method", "grp", "auc", "elapsedTime"))
 table1 <- table1[!duplicated(table1),]
 table1 <- table1[!is.na(table1$auc),]
@@ -839,13 +987,16 @@ qplot(reorder(method, auc), auc, data=table1[table1$grp==1,], geom='bar', stat='
 
 ```
 
+Tukey on Models
+====================
 
+> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
 
 Building and Testing Multiple Models
 ================================================
 
 ```{r echo=FALSE, fig.width=12, fig.height=8, fig.align='center'}
-load("data/EWSmodelFitStatsFINAL.rda")
+
 
 ggplot(ews, aes(x= 1-specificity, y = sensitivity, shape=flag)) +
   geom_point(size=I(4), alpha=I(0.4)) +
@@ -872,7 +1023,7 @@ ggplot(ews, aes(x= 1-specificity, y = sensitivity, shape=flag)) +
 Tradeoffs
 ========================
 
-```{r}
+```{r echo=FALSE, fig.width=12, fig.height=8, fig.align='center'}
 
 table1_w <- reshape(table1, direction='wide', timevar="grp", idvar="method")
 
