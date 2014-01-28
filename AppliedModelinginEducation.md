@@ -127,12 +127,31 @@ Motivation
 ===================================================
 incremental: true
 
-- Of the two modeling cultures, we've tend to focus overwhelmingly on one
+- Of the two modeling cultures, we've tended to focus overwhelmingly on one
 - Computation increases are changing everything
 - Data is growing and many problems have different issues
 - Prediction is underused and undervalued, and this undermines inference
-- In real world applications, prediction is a powerful tool that will be more 
-and more relevant to our work each year
+
+The Data Modeling Culture
+=================================
+
+- Starts philosophically with the idea that we have written down a set of X that 
+describe Y with a known functional form that we are testing
+- Black box between x and y can be known because the data generating process 
+DGP is some functional combination of predictors, parameters, and noise
+- Model fit is based on goodness of fit and residual tests
+
+<img src="img/DataModel.png" title="Data Models" alt="FP" style="display: block; margin:0 auto;" />
+
+The Algorithmic Modeling Culture
+========================================
+
+- Black box is unknowable - we are not modeling nature but seeking to use similar 
+inputs to predict the outputs of the natural process
+- Model fit measured by prediction accuracy
+
+<img src="img/AlgoModel.png" title="Algorithmic Models" alt="FP" style="display: block; margin:0 auto;" />
+
 
 The Wisconsin Dropout Early Warning System
 ===============================================
@@ -188,10 +207,9 @@ DEWS is an applied statistical model that combines several major features:
 
 - Data import, filtering, and cleaning for analysis from the state longitudinal 
 database
-- A machine learning algorithm to search among candidate models for the best 
-predictive model
-- A case scoring routine to apply predictive models to current students
-- An exporting feature to push the predictions into the state business intelligence 
+- A machine learning algorithm to search for the best predictive model
+- A prediction routine to apply models to current students
+- An exporting feature to push predictions into the state business intelligence 
 tool, WISEdash for Districts
 - A display layer available to schools and districts securely for exploring the results
 - In reality, it resembles **software** as much as a statistical analysis
@@ -216,15 +234,14 @@ All modules are built in the free and open source statistical computing language
 
 DEWS by the Numbers
 =====================================================
-
 <small>
-- Consists of over **3,500** lines of code ([working on open sourcing](www.github.com/jknowles))
 - Analyzes over **250,000** historical records of student graduation
 - Provides predictions on over **180,000** students in the state
 - Produces predictions on students in over **1,000** schools
 - Selects from over **50** candidate statistical models **per grade**
 - Hundreds of users have accessed thousands of individual student reports across 
 nearly every Wisconsin school district
+- [Working on open sourcing the code](www.github.com/jknowles)
 - Being explored in Michigan, New Jersey, and school districts in Kansas, Montana, 
 and Minnesota
 
@@ -234,63 +251,60 @@ DEWS as an Applied Model
 ====================================
 type: section
 
-> This inconsistency [in the literature] has created a hodgepodge of claims as to the accuracy of the tested dropout flags across the literature that is difficult to evaluate in an effort to help schools, districts, researchers and policymakers find and employ accurate indicators of student dropout risk. ~ Bowers, Sprott, and Taff 2013
-
-Some Trends
+Data and Computing Trends
 ======================================================
 
 - Available data in education is growing astronomically. 
-- Schools are increasingly being asked to provide more services. 
-- Policy makers increasingly asked to justify their policies with projections. 
-- Timelines are speeding up!
 - People are talking about things like "data science" and "big data" [even NSF](http://www.nsf.gov/cise/news/bigdata.jsp).
-- Academics have to explain their work to a growing list of stakeholders. 
-
-Computers
-=====================================================
-
-- Most of your statistics books were written by people who used these:
-
-<img style="height:auto; width:auto; max-width:450px; max-height:315px; display: block; margin:0 auto;" src="img/mainframes.jpg" title="Mainframe" alt="FP"/>
-
-- The high cost of computation constrains our thinking and our methods now, just 
-like it has for the last two hundred years
+- Data sources are shifting from national surveys to administrative records
+- More data = more problems; more data + more sources = more problems$^{2}$
 
 Increased Computational Power
 ======================================================================
 
 <img src="img/float-point-perf.png" title="Single Thread FP" alt="FP" style="display: block; margin:0 auto;" />
 
-<small>We are working in an era where computers are going to continually get better 
-and better at solving problems, even within our own careers</small>
+<small> Increased data size and complexity leads to new problems that increased 
+computational power often helps to solve.</small>
 
-Brian Ripley on Computation
-===================================
-<small>
-One sense of 'computer-intensive' statistics is just statistical methodology
-which makes use of a large amount of computer time - examples include
-the bootstrap, smoothing, image analysis and many uses of the 'EM algorithm'.
-
-The term is usually used for methods which go beyond the minimum of
-calculations needed for an illuminating analysis.
-- Working with (much) larger datasets.
-- Using more realistic models and better ways to fit models.
-- Exploring a (much) larger class of models.
-- Attempting a more realistic analysis of existing simple models.
-- Better visualization of data or fitted models or their combination.
+Examples of Challenges and Solutions Posed by Computation
+===========================================================
+<small>- Bigger datasets have highly complex structures to them such as deep hierarchies, 
+cross classifications, and high collinearity
+  - Methods like HLM have difficulty scaling to 3, 4, or 5 levels that may exist 
+  within a statewide data system
+  - Cross-nested and cross-classified observations are common in observational data, 
+  and difficult to deal with for many approaches
+  - Alternative methods like Bayesian mixed effect regression or regression trees 
+  are more CPU intensive, but more flexible
+  - With 12 regions, 72 counties, 424 districts, 2,200 schools, and tens of thousands 
+  of classrooms and hundreds of thousands of students the modeling data structure is complex
 </small>
-[More online](http://www.stats.ox.ac.uk/~ripley/Cox80.pdf)
 
-What Can We Do Today?
-=========================
+Straining our Generalized Linear Models
+==============================================
+<small>- Increased number of predictors allows us to build models of complex group interactions 
+that separate
+- Parameter estimates of demographic indicators are invalid when the demographic 
+indicator is not observed in each outcome category (they are perfectly collinear)
+- Quasi-separation can occur when this is close
+- Corrections exist to adjust for the fact that maximum likelihood estimates 
+are invalid in this case (Bayesian estimates, Firth bias-correction)
+- Again, leveraging computation to address a problem of increased data complexity
+</small>
 
-- Complex multivariate regressions
-- Bootstrap replication for all sorts of estimates
-- Model comparisons among multiple models
-- MCMC for Bayesian estimation of complex models
-- Multi-model inference and model averaging
-- **The high speed of computational innovation is going to require us to reinvent 
-our thinking much more frequently**
+DEWS
+==================================================
+
+- DEWS data has a complicated hierarchical structure
+- DEWS data has rare cases that have to be addressed (e.g. blind students) across 
+most indicators
+- Using CPU-intensive techniques can work, but is not limitless -- some models 
+are too slow to developed, modified, evaluated, and implemented
+- As it is, DEWS takes about 48 hours to build data and models, test them, 
+select the winnders, and produce predictions for current students
+- But in the future... who knows?
+
 
 Being a Modeling Pluralist
 =============================================
@@ -298,20 +312,6 @@ type: section
 
 > Schools of statistical thoughts are sometimes jokingly likened to religions. This analogy is not perfect - unlike religions, statistical methods have no supernatural content and make essentially no demands on our personal lives. Looking at the comparison from the other direction, it is possible to be agnostic, atheistic, or simply live one's life without religion, but it is not really possible to do statistics without some philosophy. ~ Andrew Gelman
 
-
-Outline
-=====================================================
-
-- What is a modeling culture and how can there be two?
-- Why should we pay more attention to model fit?
-- What changes when we apply a model beyond the journal article? 
-- Rules of thumb, practical advice, and communication
-
-
-What is a model?
-===============================
-
-<img src="img/Watson-Crick-DNA-model.jpg" title="Watson and Crick" alt="DNA" style="display: block; margin: auto;" />
 
 What is a statistical model?
 ===============================
@@ -340,39 +340,11 @@ $$ \hat{Y} = \alpha + \beta(X) + \epsilon $$
 However, there exist limitless alternative $\hat{f}$ which we can explore. Applied modeling techniques help us expand the $\hat{f}$ space we search within.
 
 
-The Data Modeling Culture
-=================================
-
-- Starts philosophically with the idea that we have written down a set of X that 
-describe Y with a known functional form that we are testing
-- Black box between x and y can be known because the data generating process 
-DGP is some functional combination of predictors, parameters, and noise
-- Model fit is based on goodness of fit and residual tests
-
-<img src="img/DataModel.png" title="Data Models" alt="FP" style="display: block; margin:0 auto;" />
-
-The Algorithmic Modeling Culture
-========================================
-
-- Black box is unknowable - we are not modeling nature but seeking to use similar 
-inputs to predict the outputs of the natural process
-- Model fit measured by prediction accuracy
-
-<img src="img/AlgoModel.png" title="Algorithmic Models" alt="FP" style="display: block; margin:0 auto;" />
-
 Buyer Beware
 ===========================================
 type:section
 
 > A big computer, a complex algorithm and a long time does not equal science. ~ Robert Gentleman
-
-
-On Models
-=========================================
-type: section
-
-> Statisticians, like artists, have the bad habit of falling in love with their models. ~ George Box
-
 
 
 Functional forms
@@ -403,7 +375,7 @@ Predicting Dropout
 
 Applied Model:
 <small>
-- Data: Common, transactional, regularly collected at specific timepoints
+- Data: Regularly collected at specific timepoints, standardized
 - Many cohorts with common data
 - Interested in learning which students today are likely to dropout in the future
 - Want: Confident predictions on likely graduation of new students, used to decide how
@@ -537,6 +509,7 @@ data, the difference between their predictions is **variance**
   has a different bias - a feature of the flexibility in the model
 - Less flexible models like linear models will have more bias, but are less 
 variable in response to the data they are trained on
+- How do we pick the model? We think about which model fits our application best
 
 
 
@@ -564,27 +537,10 @@ Bias, Variance, Training, and Test Data
 Measuring Fit Differently
 =============================
 
-- The more complex the model gets, the more it overfits the training data at the 
-cost of the test data!
-- Need to estimate the error on the test data set
-- Need to choose an error measure: prediction error, mean squared error, etc. 
-- Identify the method that is most appropriate: Repeated folds, cross-validation, LOOCV
-- All ways to deal with robustly choosing a model that might fit the training 
-data less optimally, but it likely to be a better fit on future data
+1. Define a metric of accuracy (ROC, AUC, kappa, RMSE, etc.)
+2. Define a strategy to estimate test data accuracy/error
+3. Perform the test, sensitivity checks
 
-Splitting the Data
-============================
-
-- In cases where observations are cheap, 50% of the sample is for training, 25% 
-for validation, and 25% for final testing
-- When data is not cheap, a number of methods can be used to approximate the 
-test set error
-- We are familiar with in-sample error estimates such as AIC, BIC, etc.
-- K fold cross-validation splits the data into 5 groups, and uses each group 
-1 time as a validation set, fitting the model to the other 4 groups
-  *  "Overall, ﬁve- or tenfold cross-validation are recommended as a good compromise: see Breiman and Spector (1992)
-and Kohavi (1995)." Hastie et al p. 243
-- Bootstrap
 
 Metrics of Model Fit
 ===============================
@@ -592,8 +548,7 @@ Metrics of Model Fit
 - In the continuous case, Root Mean Square Error (RMSE)
 - In the discrete case, there are a number of options including kappa, 
 ROC, AUC, and others
-- We will discuss the two-class discrete case as an example, considering the 
-issue of dropout
+- ROC: Receiver Operating Characteristic, AUC: Area Under the (ROC) Curve
 - Many of these metrics can be extended to the multi-class case as well
 
 Confusion Matrix
@@ -759,18 +714,53 @@ or as the balancing metric (false alarm) that we seek to hold constant while
 increasing our sensitivity. 
 
 
+Estimating the Test Error
+================================
 
-What Changes When a Model is Actually Used?
-==================================================
+- In cases where observations are cheap, 50% of the sample is for training, 25% 
+for validation, and 25% for final testing
+- When data are not cheap, a number of methods can be used to approximate the 
+test set error
+- K fold cross-validation splits the data into 5 groups, and uses each group 
+1 time as a validation set, fitting the model to the other 4 groups
+  *  "Overall, ﬁve- or tenfold cross-validation are recommended as a good compromise: see Breiman and Spector (1992)
+and Kohavi (1995)." Hastie et al p. 243
+- Bootstrap procedures may be faster
 
-
-Outline
-===================
-
-1. Training and test fit
-2. Classification measures
-3. Cross-validation
-4. Setting thresholds
+Summary of Methods
+================================================
+<table>
+<tr>
+<th>Method</th>
+<th>Data Loss</th>
+<th>External Validity</th>
+</tr>
+<tr>
+<td>Hold 1 Cohort Out</td>
+<td>Highest</td>
+<td>Highest</td>
+</tr>
+<tr>
+<td>Random Sample from Multiple Cohorts</td>
+<td>High</td>
+<td>Higher</td>
+</tr>
+<tr>
+<td>Simple Random Sample in Training Data</td>
+<td>Moderate</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Stratified Sample Within Training Data</td>
+<td>Moderate</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Repeated Fold Cross-Validation</td>
+<td>Low</td>
+<td>Moderate</td>
+</tr>
+</table>
 
 
 Model Fit: Predicting Dropouts
@@ -804,31 +794,6 @@ Results
 <img src="AppliedModelinginEducation-figure/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
 
 
-Tukey on Models
-====================
-
-> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
-
-
-
-Ensembles and the Myth of the 1 True Model
-====================================================
-
-- Any single model can exhibit bias in the test data
-- We are also assuming that one model is enough and is correct
-- Ensembles, multi-model inference, these are techniques to allow us to 
-borrow strengths from multiple models and hedge against error
-- Easy to implement with computation advances today
-
-Other Advantages
-===================================================
-
-- Model averaging can be useful in cases where observations have different 
-levels of data availability 
-- Model averaging allows the multiple dimensions of a problem to be weighted and 
-considered in prediction
-- Bayesian Model Averaging has some nice properties
-
 
 Data Cleaning
 ==================================================
@@ -844,24 +809,49 @@ is made in their application
 - Sometimes cleaning takes the form of automatic filters, other times it is in 
 compliance with a business rule
 - Data cleaning is incredibly important when using administrative data
+- Data cleaning is **high stakes** in an applied setting
 - Knowing the content helps, asking an expert such as a database administrator is 
 even better
 
 Preparing Data
 =================================================
 
-1. Recoding variables
+1. Recoding categorical variables
 2. Centering and scaling
 3. Dealing with missingness
 
 
+Coding Categorical Data
+============================
+
+- Key tradeoff of losing information by reducing categories and need to consolidate 
+sparse groups to produce valid estimates
+- There may be non-empirical concerns as well such as perception of groups of 
+categories as similar
+- Solution is to propose collapses of groups that are similar with respect to the DV and 
+which are too small for strong estimates
+- May disappear in the end after feature / variable selection, but need to be considered
+- Consider whether they can be ordered as well
+
+Scale and Center the Continous Variables
+=============================================
+
+- Scaling and centering can reduce noise in assessment data (issues like LOSS)
+- Can help deal with attendance data that is heavily skewed toward the high end
+- Converting counts to percents helps keep units (like schools) on a similar scale
+- Improves the efficiency of many statistical algorithms and MCMC methods
+
 Missing Data Issues
 ==================================================
 
-- Missing data is acutely important to predictive modeling, especially when 
-the training and test set are created by sampling
-- Need to consider what data will be available when for the future set of cases 
-to be predicted
+- Missing data is acutely important to predictive modeling, need to consider 
+when and what data you need to predict outcomes will be available
+- Data is often missing in administrative records, and is almost never missing 
+at random (students missing data are more likely to dropout!)
+- In Wisconsin, each additional year of data longitudinally that a method requires 
+eliminates 6,000 students from receiving a prediction due to missing data
+- Identifying that the outcome is correctly classified and not a default assumption 
+is important - e.g. dropouts
 
 Communication
 ==================================================
@@ -870,7 +860,10 @@ type: section
 > Use graphics to display your model results to users. How to do that is a subject 
 for another talk. 
 
+Most Accurate Model is Easy to Find!
+================================================
 
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
 
 
 Credits
@@ -878,23 +871,26 @@ Credits
 - Some of the figures in this presentation are taken from "An Introduction to 
 Statistical Learning, with applications in R"  (Springer, 2013) with permission 
 from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani
-- Watson and Crick photo from: [http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg](http://www.thehistoryblog.com/wp-content/uploads/2013/05/Watson-Crick-DNA-model.jpg)
 - CPU power graph: [http://preshing.com/20120208/a-look-back-at-single-threaded-cpu-performance/](http://preshing.com/20120208/a-look-back-at-single-threaded-cpu-performance/)
+
+Contact Info
+===========================
+
+- DEWS Homepage: [http://wise.dpi.wi.gov/wisedash_dews](http://wise.dpi.wi.gov/wisedash_dews)
+- E-mail: jared.knowles@dpi.wi.gov / jeknowles@wisc.edu
+- GitHub: [http://www.github.com/jknowles](http://www.github.com/jknowles)
+- Google+: [https://plus.google.com/+JaredKnowles](https://plus.google.com/+JaredKnowles)
+
 
 Further Resources
 ====================
-
-<small>
-- The Signal and the Noise: Why So Many Predictions Fail — but Some Don't. Nate Silver. (2012). Penguin.
+<small> - The Signal and the Noise: Why So Many Predictions Fail — but Some Don't. Nate Silver. (2012). Penguin.
 - The Black Swan: Second Edition: The Impact of the Highly Improbable (2nd ed. 2010). Nassim Taleb.  Random House.
 - An Introduction to Statistical Learning (2013). Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. Springer. [Download the book](http://www-bcf.usc.edu/~gareth/ISL/index.html)
 - Elements of Statistical Learning (Second Edition, 2011). Trevor Hastie, 
 Robert Tibshirani, and Jerome Friedman. Springer [Download the book](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
-- Model Selection and Model Averaging (2008). Gerda Claeskens and Nils Lid Hjort. [Get the book](http://www.amazon.com/Selection-Averaging-Statistical-Probabilistic-Mathematics/dp/0521852250)
-- Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach 
-(2004). Kenneth P. Burnham and David R. Anderson [Get the book](http://www.amazon.com/Model-Selection-Multimodel-Inference-Information-Theoretic/dp/1441929738/ref=pd_sim_b_1)
-
 </small>
+
 An Aside on Unsupervised Models
 =====================================
 
@@ -910,5 +906,5 @@ analysis, or principal components analysis
 Tradeoffs
 ========================
 
-<img src="AppliedModelinginEducation-figure/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-10.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
 
