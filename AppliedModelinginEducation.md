@@ -612,8 +612,7 @@ Accuracy: $\frac{(a+d)}{(a+b+c+d)}$
 Accuracy is a good measure if our classes are fairly balanced and we care about 
 overall correctly dividing the data into the groups. 
 
-If one group is much larger than another though, the most accurate model may not 
-be the model that most correctly classifies the group we care about. (CITATION)
+If one group is much larger than another though, this method can be misleading.
 
 Confusion Matrix
 ======================
