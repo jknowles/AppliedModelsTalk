@@ -586,6 +586,16 @@ test set error
 and Kohavi (1995)." Hastie et al p. 243
 - Bootstrap
 
+Metrics of Model Fit
+===============================
+
+- In the continuous case, Root Mean Square Error (RMSE)
+- In the discrete case, there are a number of options including kappa, 
+ROC, AUC, and others
+- We will discuss the two-class discrete case as an example, considering the 
+issue of dropout
+- Many of these metrics can be extended to the multi-class case as well
+
 Confusion Matrix
 ======================
 <table>
@@ -781,10 +791,17 @@ Problems
 single indicator
 - But... we have a strong baseline universe to compare to
 
+Building and Testing Multiple Models
+================================================
+
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+
+
+
 Results
 ==================================================
 
-<img src="AppliedModelinginEducation-figure/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
 
 
 Tukey on Models
@@ -792,38 +809,68 @@ Tukey on Models
 
 > Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
 
-Building and Testing Multiple Models
-================================================
-
-<img src="AppliedModelinginEducation-figure/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
-
-
-
-Tradeoffs
-========================
-
-<img src="AppliedModelinginEducation-figure/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
-
 
 
 Ensembles and the Myth of the 1 True Model
 ====================================================
 
-- But even these models can exhibit bias in the test data
+- Any single model can exhibit bias in the test data
 - We are also assuming that one model is enough and is correct
 - Ensembles, multi-model inference, these are techniques to allow us to 
 borrow strengths from multiple models and hedge against error
-- Easy to implement with computation
+- Easy to implement with computation advances today
+
+Other Advantages
+===================================================
+
+- Model averaging can be useful in cases where observations have different 
+levels of data availability 
+- Model averaging allows the multiple dimensions of a problem to be weighted and 
+considered in prediction
+- Bayesian Model Averaging has some nice properties
+
+
+Data Cleaning
+==================================================
+type: section
+
+> The one line in your methods section that took 80% of the work. 
+
+Data Cleaning
+===================================================
+
+- Data cleaning decisions are incredibly consequential, yet little formal training 
+is made in their application
+- Sometimes cleaning takes the form of automatic filters, other times it is in 
+compliance with a business rule
+- Data cleaning is incredibly important when using administrative data
+- Knowing the content helps, asking an expert such as a database administrator is 
+even better
 
 Preparing Data
 =================================================
 
 1. Recoding variables
 2. Centering and scaling
+3. Dealing with missingness
 
 
 Missing Data Issues
 ==================================================
+
+- Missing data is acutely important to predictive modeling, especially when 
+the training and test set are created by sampling
+- Need to consider what data will be available when for the future set of cases 
+to be predicted
+
+Communication
+==================================================
+type: section
+
+> Use graphics to display your model results to users. How to do that is a subject 
+for another talk. 
+
+
 
 
 Credits
@@ -858,4 +905,10 @@ An Aside on Unsupervised Models
 analysis, or principal components analysis
 - Can be useful for starting an analysis, looking for structure
 
+
+
+Tradeoffs
+========================
+
+<img src="AppliedModelinginEducation-figure/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
 

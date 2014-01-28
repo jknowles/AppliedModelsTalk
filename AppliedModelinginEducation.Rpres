@@ -735,6 +735,16 @@ test set error
 and Kohavi (1995)." Hastie et al p. 243
 - Bootstrap
 
+Metrics of Model Fit
+===============================
+
+- In the continuous case, Root Mean Square Error (RMSE)
+- In the discrete case, there are a number of options including kappa, 
+ROC, AUC, and others
+- We will discuss the two-class discrete case as an example, considering the 
+issue of dropout
+- Many of these metrics can be extended to the multi-class case as well
+
 Confusion Matrix
 ======================
 <table>
@@ -965,38 +975,12 @@ Problems
 single indicator
 - But... we have a strong baseline universe to compare to
 
-Results
-==================================================
-
-```{r echo=FALSE, fig.width=12, fig.height=8, fig.align='center'}
-load("data/EWSmodelFitStatsFINAL.rda")
-table1 <- subset(ModelFits, select=c("method", "grp", "auc", "elapsedTime"))
-table1 <- table1[!duplicated(table1),]
-table1 <- table1[!is.na(table1$auc),]
-
-# mytab <- table1[table1$grp==1,]
-# mytab$elapsedTime <- mytab$elapsedTime / 60
-# mytab$auc <- round(mytab$auc, digits=2)
-# mytab$elapsedTime <- round(mytab$elapsedTime, digits=2)
-# print(head(mytab[order(-mytab$auc),], 5), row.names=FALSE)
-
-qplot(reorder(method, auc), auc, data=table1[table1$grp==1,], geom='bar', stat='identity') + 
-  coord_flip() + 
-  theme_dpi() + labs(title="Area Under the Curve for Test Data", x="Algorithm", 
-                     y = "AUC")
-
-```
-
-Tukey on Models
-====================
-
-> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
-
 Building and Testing Multiple Models
 ================================================
 
 ```{r echo=FALSE, fig.width=12, fig.height=8, fig.align='center'}
 
+load("data/EWSmodelFitStatsFINAL.rda")
 
 ggplot(ews, aes(x= 1-specificity, y = sensitivity, shape=flag)) +
   geom_point(size=I(4), alpha=I(0.4)) +
@@ -1020,37 +1004,94 @@ ggplot(ews, aes(x= 1-specificity, y = sensitivity, shape=flag)) +
 ```
 
 
-Tradeoffs
-========================
+Results
+==================================================
 
 ```{r echo=FALSE, fig.width=12, fig.height=8, fig.align='center'}
+table1 <- subset(ModelFits, select=c("method", "grp", "auc", "elapsedTime"))
+table1 <- table1[!duplicated(table1),]
+table1 <- table1[!is.na(table1$auc),]
 
-table1_w <- reshape(table1, direction='wide', timevar="grp", idvar="method")
+# mytab <- table1[table1$grp==1,]
+# mytab$elapsedTime <- mytab$elapsedTime / 60
+# mytab$auc <- round(mytab$auc, digits=2)
+# mytab$elapsedTime <- round(mytab$elapsedTime, digits=2)
+# print(head(mytab[order(-mytab$auc),], 5), row.names=FALSE)
 
-qplot(method, auc.2 - auc.1, data=table1_w, geom='bar', stat='identity') + 
-  theme_dpi() + theme(axis.text.x=element_text(angle=30, vjust=.5))
+qplot(reorder(method, auc), auc, data=table1[table1$grp==1,], geom='bar', stat='identity') + 
+  coord_flip() + 
+  theme_dpi() + labs(title="Area Under the Curve for Test Data", x="Algorithm", 
+                     y = "AUC")
 
 ```
+
+Tukey on Models
+====================
+
+> Since no model is to be believed in, no optimization for a single model can offer more than distant guidance. What is needed, and is never more than approximately at hand, is guidance about what to do in a sequence of ever more realistic situations. The analyst of data is lucky if he [or she] has some insight into a few terms of this sequence, particularly those not yet mathematized. ~ John W. Tukey
+
 
 
 Ensembles and the Myth of the 1 True Model
 ====================================================
 
-- But even these models can exhibit bias in the test data
+- Any single model can exhibit bias in the test data
 - We are also assuming that one model is enough and is correct
 - Ensembles, multi-model inference, these are techniques to allow us to 
 borrow strengths from multiple models and hedge against error
-- Easy to implement with computation
+- Easy to implement with computation advances today
+
+Other Advantages
+===================================================
+
+- Model averaging can be useful in cases where observations have different 
+levels of data availability 
+- Model averaging allows the multiple dimensions of a problem to be weighted and 
+considered in prediction
+- Bayesian Model Averaging has some nice properties
+
+
+Data Cleaning
+==================================================
+type: section
+
+> The one line in your methods section that took 80% of the work. 
+
+Data Cleaning
+===================================================
+
+- Data cleaning decisions are incredibly consequential, yet little formal training 
+is made in their application
+- Sometimes cleaning takes the form of automatic filters, other times it is in 
+compliance with a business rule
+- Data cleaning is incredibly important when using administrative data
+- Knowing the content helps, asking an expert such as a database administrator is 
+even better
 
 Preparing Data
 =================================================
 
 1. Recoding variables
 2. Centering and scaling
+3. Dealing with missingness
 
 
 Missing Data Issues
 ==================================================
+
+- Missing data is acutely important to predictive modeling, especially when 
+the training and test set are created by sampling
+- Need to consider what data will be available when for the future set of cases 
+to be predicted
+
+Communication
+==================================================
+type: section
+
+> Use graphics to display your model results to users. How to do that is a subject 
+for another talk. 
+
+
 
 
 Credits
@@ -1106,3 +1147,15 @@ analysis, or principal components analysis
 - Can be useful for starting an analysis, looking for structure
 
 
+
+Tradeoffs
+========================
+
+```{r echo=FALSE, fig.width=12, fig.height=8, fig.align='center'}
+
+table1_w <- reshape(table1, direction='wide', timevar="grp", idvar="method")
+
+qplot(method, auc.2 - auc.1, data=table1_w, geom='bar', stat='identity') + 
+  theme_dpi() + theme(axis.text.x=element_text(angle=30, vjust=.5))
+
+```
