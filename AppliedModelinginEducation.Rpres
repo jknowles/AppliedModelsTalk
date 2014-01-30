@@ -109,6 +109,9 @@ blockquote p {
 
 </style>
 
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full" type="text/javascript">
+</script>
+
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
     "HTML-CSS": { scale: 100}

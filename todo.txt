@@ -1,20 +1,7 @@
 TODO: 
 
 
-NEW OUTLINE for Social Scientists
-=======================================
-
-- Talk about focus on prediction
-- Evaluating prediction is the key for models that will be USED
-- New ways of evaluating model fit - OOS testing
-- Too high of model fit is a bad thing - what is overfit and why it hurts
-- Thesholds and ROC - binary classification is way easier to understand than odds-ratios
-- Tradeoffs in cleaning and recoding variables, some rules of thumb/best practices
-- Missing data, missing data - it can bite you twice in an applied setting (mode build, model score)
-- Centering and scaling -- recoding continuous data can help you tremendously
-- Model updating and model support (it doesn't end with a table of results)
-- Presentation and communication
-
+- TEST on the laptop
 
 
 
